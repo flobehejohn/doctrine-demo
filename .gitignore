@@ -1,0 +1,20 @@
+# Node/JS
+node_modules/
+dist/
+build/
+coverage/
+
+# IDE/OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Artefacts lourds de démo (on ne garde que les livrables finaux)
+audit/demo/images/
+audit/demo/*.zip
+audit/demo/*.csv
+!audit/demo/report.html
+!audit/demo/report.pdf

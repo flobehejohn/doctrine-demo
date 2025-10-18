@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: doctrine-demo-ing
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "4m"
+    # Activer cert-manager une fois le certificat disponible :
+    # cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: demo.ton-domaine.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: doctrine-demo-svc
+                port:
+                  number: 80

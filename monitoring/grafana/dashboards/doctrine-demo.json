@@ -1,0 +1,52 @@
+{
+  "title": "Doctrine Demo - App Overview",
+  "schemaVersion": 38,
+  "version": 1,
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Requests / s",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[1m])",
+          "legendFormat": "{{route}} {{method}} {{code}}"
+        }
+      ],
+      "id": 1
+    },
+    {
+      "type": "graph",
+      "title": "Latency p95 (s) /search",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{route=\"/search\"}[1m])) by (le))",
+          "legendFormat": "p95 /search"
+        }
+      ],
+      "id": 2
+    },
+    {
+      "type": "graph",
+      "title": "CPU (pods)",
+      "targets": [
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{image!=\"\",pod=~\"doctrine-demo.*\"}[1m]))",
+          "legendFormat": "CPU"
+        }
+      ],
+      "id": 3
+    },
+    {
+      "type": "graph",
+      "title": "Memory (pods)",
+      "targets": [
+        {
+          "expr": "sum(container_memory_working_set_bytes{image!=\"\",pod=~\"doctrine-demo.*\"})",
+          "legendFormat": "Mem"
+        }
+      ],
+      "id": 4
+    }
+  ],
+  "time": { "from": "now-15m", "to": "now" }
+}

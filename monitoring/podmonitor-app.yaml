@@ -1,0 +1,16 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: doctrine-demo
+  namespace: monitoring
+spec:
+  namespaceSelector:
+    matchNames: ["default"]
+  selector:
+    matchLabels:
+      app: doctrine-demo
+  podMetricsEndpoints:
+    - targetPort: 8080
+      path: /metrics
+      interval: 15s

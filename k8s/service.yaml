@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: doctrine-demo-svc
+  labels: { app: doctrine-demo }
+spec:
+  type: ClusterIP
+  selector: { app: doctrine-demo }
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080

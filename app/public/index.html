@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Doctrine Demo – Node API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+      }
+      body {
+        margin: 0;
+        padding: 2rem;
+        background: #0f172a;
+        color: #f8fafc;
+      }
+      h1 {
+        margin-bottom: 0.25rem;
+      }
+      p.lead {
+        margin-top: 0;
+        max-width: 640px;
+        color: #cbd5f5;
+      }
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+      .badge {
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.75rem;
+        min-width: 200px;
+        background: rgba(15, 118, 110, 0.2);
+        border: 1px solid rgba(45, 212, 191, 0.4);
+      }
+      .badge h3 {
+        margin: 0 0 0.25rem;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #5eead4;
+      }
+      .badge span {
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+      .badge.error {
+        background: rgba(220, 38, 38, 0.2);
+        border-color: rgba(248, 113, 113, 0.4);
+      }
+      .badge.error h3 {
+        color: #f87171;
+      }
+      form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      input[type="text"] {
+        flex: 1;
+        min-width: 240px;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        background: rgba(15, 118, 110, 0.1);
+        color: inherit;
+      }
+      button,
+      a.button {
+        padding: 0.75rem 1.25rem;
+        background: #38bdf8;
+        color: #0f172a;
+        border-radius: 0.5rem;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      button.secondary,
+      a.button.secondary {
+        background: rgba(59, 130, 246, 0.2);
+        color: #cbd5f5;
+        border: 1px solid rgba(147, 197, 253, 0.3);
+      }
+      pre {
+        background: rgba(15, 23, 42, 0.75);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+      }
+      ul {
+        max-width: 640px;
+      }
+      footer {
+        margin-top: 3rem;
+        font-size: 0.875rem;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Doctrine Demo API</h1>
+      <p class="lead">
+        Express + Prometheus + Grafana + Kubernetes. Toggle latency, observe p95,
+        and show SRE reflexes in one minute.
+      </p>
+    </header>
+
+    <section class="badges">
+      <div class="badge" id="health-badge">
+        <h3>Health</h3>
+        <span>…</span>
+      </div>
+      <div class="badge" id="p95-badge">
+        <h3>Latency p95</h3>
+        <span>…</span>
+      </div>
+      <div class="badge" id="rps-badge">
+        <h3>Search RPS</h3>
+        <span>…</span>
+      </div>
+    </section>
+
+    <section>
+      <form id="search-form">
+        <input
+          type="text"
+          name="query"
+          id="query"
+          placeholder="Try: doctrine"
+          autocomplete="off"
+        />
+        <button type="submit">Search</button>
+        <a class="button secondary" href="/metrics" target="_blank" rel="noopener">
+          View Prometheus metrics
+        </a>
+        <a
+          class="button secondary"
+          href="https://grafana.example.com/d/doctrine-demo"
+          target="_blank"
+          rel="noopener"
+        >
+          Open Grafana (placeholder)
+        </a>
+      </form>
+      <pre id="search-result">Search results will appear here.</pre>
+    </section>
+
+    <section>
+      <h2>How it’s built</h2>
+      <ul>
+        <li>Node.js + Express instrumented with prom-client and pino logging.</li>
+        <li>Docker multi-stage image (non-root) deployed via Kubernetes manifests.</li>
+        <li>Prometheus scrape annotations + Grafana dashboard for p95/RPS/5xx.</li>
+        <li>CircleCI pipeline builds the image, pushes to GHCR, and deploys to k3d/EKS.</li>
+        <li>PowerShell helpers automate latency injection, port-forward, and tunnels.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>
+        Need the full playbook? Check <strong>RUNBOOK.md</strong>,
+        <strong>SLO.md</strong>, and <strong>CHECKLIST.md</strong> at the project
+        root.
+      </p>
+    </footer>
+
+    <script>
+      const healthBadge = document.getElementById("health-badge");
+      const p95Badge = document.getElementById("p95-badge");
+      const rpsBadge = document.getElementById("rps-badge");
+      const resultPre = document.getElementById("search-result");
+
+      let previousCounter = null;
+      let previousTimestamp = null;
+
+      async function refreshHealth() {
+        try {
+          const response = await fetch("/healthz", { cache: "no-store" });
+          const ok = response.ok;
+          updateBadge(healthBadge, ok ? "Healthy" : "Unhealthy", !ok);
+        } catch (error) {
+          updateBadge(healthBadge, "Unreachable", true);
+        }
+      }
+
+      function parseLabels(labelString) {
+        return labelString.split(",").reduce((acc, piece) => {
+          const [key, rawValue] = piece.split("=");
+          acc[key] = rawValue.replace(/^"|"$/g, "");
+          return acc;
+        }, {});
+      }
+
+      function computeP95(buckets) {
+        if (!buckets.length) return null;
+        const total = buckets[buckets.length - 1].value;
+        if (total === 0) return 0;
+        const target = total * 0.95;
+        for (const bucket of buckets) {
+          if (bucket.value >= target) {
+            return parseFloat(bucket.le);
+          }
+        }
+        return parseFloat(buckets[buckets.length - 1].le);
+      }
+
+      async function refreshMetrics() {
+        try {
+          const metricsText = await fetch("/metrics", { cache: "no-store" }).then(res =>
+            res.text()
+          );
+          const lines = metricsText.split("\n");
+          const histogramBuckets = [];
+          let counterTotal = null;
+
+          const bucketRegex =
+            /^http_request_duration_seconds_bucket\{([^}]*)\}\s+([0-9.]+)$/;
+          const counterRegex =
+            /^http_requests_total\{([^}]*)\}\s+([0-9.]+)$/;
+
+          for (const line of lines) {
+            const bucketMatch = line.match(bucketRegex);
+            if (bucketMatch) {
+              const labels = parseLabels(bucketMatch[1]);
+              if (
+                labels.route === "/search" &&
+                labels.method === "GET" &&
+                labels.code === "200"
+              ) {
+                histogramBuckets.push({
+                  le: labels.le,
+                  value: parseFloat(bucketMatch[2])
+                });
+              }
+              continue;
+            }
+
+            const counterMatch = line.match(counterRegex);
+            if (counterMatch) {
+              const labels = parseLabels(counterMatch[1]);
+              if (
+                labels.route === "/search" &&
+                labels.method === "GET" &&
+                labels.code === "200"
+              ) {
+                counterTotal = parseFloat(counterMatch[2]);
+              }
+            }
+          }
+
+          histogramBuckets.sort(
+            (a, b) => parseFloat(a.le) - parseFloat(b.le)
+          );
+          const p95 = computeP95(histogramBuckets);
+          if (p95 === null) {
+            updateBadge(p95Badge, "n/a", false);
+          } else {
+            updateBadge(p95Badge, `${p95.toFixed(2)}s`, p95 > 0.3);
+          }
+
+          if (counterTotal !== null) {
+            const now = Date.now();
+            if (previousCounter !== null && previousTimestamp !== null) {
+              const delta = counterTotal - previousCounter;
+              const seconds = (now - previousTimestamp) / 1000;
+              const rps = seconds > 0 ? delta / seconds : 0;
+              updateBadge(rpsBadge, `${rps.toFixed(2)} rps`, false);
+            }
+            previousCounter = counterTotal;
+            previousTimestamp = now;
+          }
+        } catch (error) {
+          updateBadge(p95Badge, "error", true);
+          updateBadge(rpsBadge, "error", true);
+        }
+      }
+
+      function updateBadge(element, text, isError) {
+        element.querySelector("span").textContent = text;
+        element.classList.toggle("error", Boolean(isError));
+      }
+
+      document
+        .getElementById("search-form")
+        .addEventListener("submit", async event => {
+          event.preventDefault();
+          const query = document.getElementById("query").value.trim();
+          resultPre.textContent = "Loading…";
+          try {
+            const response = await fetch(`/search?query=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            resultPre.textContent = JSON.stringify(data, null, 2);
+          } catch (error) {
+            resultPre.textContent = `Error: ${error.message}`;
+          }
+        });
+
+      refreshHealth();
+      refreshMetrics();
+      setInterval(() => {
+        refreshHealth();
+        refreshMetrics();
+      }, 5000);
+    </script>
+  </body>
+</html>

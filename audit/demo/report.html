@@ -1,0 +1,1034 @@
+<!doctype html><html><head><meta charset='utf-8'><title>DevOps Proof (8h)</title><style>
+body{font-family:Segoe UI,Arial,Helvetica,sans-serif;margin:24px;color:#222;}
+h1{margin:0 0 8px 0} h2{margin-top:28px;border-bottom:2px solid #eee;padding-bottom:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{border:1px solid #eee;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+pre{background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;overflow:auto}
+table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:6px 8px;font-size:12px}
+th{background:#f8fafc;text-align:left}
+.kpi{display:flex;gap:18px}.pill{background:#eef2ff;border:1px solid #c7d2fe;border-radius:999px;padding:6px 12px}
+.small{color:#555;font-size:12px}.caption{color:#64748b;font-size:12px;margin-top:6px}
+</style></head><body>
+<h1>DevOps Proof (8h) — Grafana / Prometheus / Alertmanager</h1>
+<div class='kpi'>
+  <div class='pill'>Targets UP: 19</div>
+  <div class='pill'>Targets DOWN: 4</div>
+  <div class='pill'>Généré: 10/18/2025 00:42:58</div>
+</div>
+
+<h2>1) Stack & Contexte</h2>
+<div class='grid'>
+  <div class='card'><h3>Docker version</h3><pre>Client:  Version:           28.0.1  API version:       1.48  Go version:        go1.23.6  Git commit:        068a01e  Built:             Wed Feb 26 10:41:52 2025  OS/Arch:           windows/amd64  Context:           desktop-linux  Server: Docker Desktop 4.39.0 (184744)  Engine:   Version:          28.0.1   API version:      1.48 (minimum version 1.24)   Go version:       go1.23.6   Git commit:       bbd0a17   Built:            Wed Feb 26 10:41:16 2025   OS/Arch:          linux/amd64   Experimental:     false  containerd:   Version:          1.7.25   GitCommit:        bcc810d6b9066471b0b6fa75f557a15a1cbf31bb  runc:   Version:          1.2.4   GitCommit:        v1.2.4-0-g6c52b3f  docker-init:   Version:          0.19.0   GitCommit:        de40ad0</pre></div>
+  <div class='card'><h3>Kube context</h3><pre>kind-dev</pre></div>
+  <div class='card'><h3>Nœuds</h3><pre>NAME                STATUS   ROLES           AGE    VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION                       CONTAINER-RUNTIME dev-control-plane   Ready    control-plane   181d   v1.32.3   172.21.0.2    <none>        Debian GNU/Linux 12 (bookworm)   5.15.167.4-microsoft-standard-WSL2   containerd://2.0.3</pre></div>
+  <div class='card'><h3>Helm (monitoring)</h3><pre>NAME   	NAMESPACE 	REVISION	UPDATED                               	STATUS  	CHART                       	APP VERSION kpstack	monitoring	3       	2025-10-12 11:39:07.7079552 +0200 CEST	deployed	kube-prometheus-stack-78.1.0	v0.86.0    </pre></div>
+  <div class='card'><h3>Pods monitoring</h3><pre>NAME                                                     READY   STATUS             RESTARTS         AGE     IP            NODE                NOMINATED NODE   READINESS GATES alertmanager-kpstack-kube-prometheus-st-alertmanager-0   2/2     Running            4 (15h ago)      5d23h   10.244.0.8    dev-control-plane   <none>           <none> cpu-burn                                                 0/1     Completed          0                23h     <none>        dev-control-plane   <none>           <none> crashy                                                   0/1     CrashLoopBackOff   187 (2m1s ago)   23h     10.244.0.2    dev-control-plane   <none>           <none> kpstack-grafana-7b4458666c-7r4f5                         3/3     Running            0                3h10m   10.244.0.35   dev-control-plane   <none>           <none> kpstack-kube-prometheus-st-operator-77c4c9c69-gbnnw      1/1     Running            18 (15h ago)     5d23h   10.244.0.11   dev-control-plane   <none>           <none> kpstack-kube-state-metrics-5c56d48f44-lz25b              1/1     Running            9 (15h ago)      5d23h   10.244.0.5    dev-control-plane   <none>           <none> kpstack-prometheus-node-exporter-5dftm                   1/1     Running            4 (15h ago)      5d23h   172.21.0.2    dev-control-plane   <none>           <none> prometheus-kpstack-kube-prometheus-st-prometheus-0       2/2     Running            10 (15h ago)     5d23h   10.244.0.9    dev-control-plane   <none>           <none></pre></div>
+  <div class='card'><h3>Pods app</h3><pre>NAME                             READY   STATUS             RESTARTS      AGE    IP            NODE                NOMINATED NODE   READINESS GATES doctrine-demo-6f7d59bb5d-xt7qd   0/1     InvalidImageName   0             13s    10.244.0.38   dev-control-plane   <none>           <none> doctrine-demo-7f59449c44-vbzjg   1/1     Running            3 (15h ago)   7d1h   10.244.0.14   dev-control-plane   <none>           <none> doctrine-demo-b8d86f44-br2z6     0/1     InvalidImageName   0             9h     10.244.0.31   dev-control-plane   <none>           <none></pre></div>
+  <div class='card'><h3>Services monitoring</h3><pre>NAME                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE     SELECTOR alertmanager-operated                     ClusterIP   None            <none>        9093/TCP,9094/TCP,9094/UDP   7d23h   app.kubernetes.io/name=alertmanager kpstack-grafana                           ClusterIP   10.96.3.218     <none>        80/TCP                       5d23h   app.kubernetes.io/instance=kpstack,app.kubernetes.io/name=grafana kpstack-kube-prometheus-st-alertmanager   ClusterIP   10.96.173.125   <none>        9093/TCP,8080/TCP            5d23h   alertmanager=kpstack-kube-prometheus-st-alertmanager,app.kubernetes.io/name=alertmanager kpstack-kube-prometheus-st-operator       ClusterIP   10.96.243.202   <none>        443/TCP                      5d23h   app=kube-prometheus-stack-operator,release=kpstack kpstack-kube-prometheus-st-prometheus     ClusterIP   10.96.47.103    <none>        9090/TCP,8080/TCP            5d23h   app.kubernetes.io/name=prometheus,operator.prometheus.io/name=kpstack-kube-prometheus-st-prometheus kpstack-kube-state-metrics                ClusterIP   10.96.10.207    <none>        8080/TCP                     5d23h   app.kubernetes.io/instance=kpstack,app.kubernetes.io/name=kube-state-metrics kpstack-prometheus-node-exporter          ClusterIP   10.96.55.13     <none>        9100/TCP                     5d23h   app.kubernetes.io/instance=kpstack,app.kubernetes.io/name=prometheus-node-exporter prometheus-operated                       ClusterIP   None            <none>        9090/TCP                     7d23h   app.kubernetes.io/name=prometheus</pre></div>
+  <div class='card'><h3>Alertmanager — alerts actives</h3><pre>[
+  {
+    "annotations": {
+      "description": "StatefulSet visualog/elasticsearch update has not been rolled out on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubestatefulsetupdatenotrolledout",
+      "summary": "StatefulSet update has not been rolled out."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "0ce4ada58a2617a6",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.361Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=%28max+by+%28namespace%2C+statefulset%2C+job%2C+cluster%29+%28kube_statefulset_status_current_revision%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+unless+kube_statefulset_status_update_revision%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%29+%2A+on+%28namespace%2C+statefulset%2C+job%2C+cluster%29+%28kube_statefulset_replicas%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+%21%3D+kube_statefulset_status_replicas_updated%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%29%29+and+on+%28namespace%2C+statefulset%2C+job%2C+cluster%29+%28changes%28kube_statefulset_status_replicas_updated%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%5B5m%5D%29+%3D%3D+0%29&g0.tab=1",
+    "labels": {
+      "alertname": "KubeStatefulSetUpdateNotRolledOut",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "severity": "warning",
+      "statefulset": "elasticsearch"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Pod default/doctrine-demo-b8d86f44-br2z6 has been in a non-ready state for longer than 15 minutes on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepodnotready",
+      "summary": "Pod has been in a non-ready state for more than 15 minutes."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "0f8b57ae39a6443a",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T13:07:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.357Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=sum+by+%28namespace%2C+pod%2C+cluster%29+%28max+by+%28namespace%2C+pod%2C+cluster%29+%28kube_pod_status_phase%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%2Cphase%3D~%22Pending%7CUnknown%7CFailed%22%7D%29+%2A+on+%28namespace%2C+pod%2C+cluster%29+group_left+%28owner_kind%29+topk+by+%28namespace%2C+pod%2C+cluster%29+%281%2C+max+by+%28namespace%2C+pod%2C+owner_kind%2C+cluster%29+%28kube_pod_owner%7Bowner_kind%21%3D%22Job%22%7D%29%29%29+%3E+0&g0.tab=1",
+    "labels": {
+      "alertname": "KubePodNotReady",
+      "namespace": "default",
+      "pod": "doctrine-demo-b8d86f44-br2z6",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "severity": "warning"
+    }
+  },
+  {
+    "annotations": {
+      "description": "StatefulSet visualog/elasticsearch has not matched the expected number of replicas for longer than 15 minutes on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubestatefulsetreplicasmismatch",
+      "summary": "StatefulSet has not matched the expected number of replicas."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "133225b61fa8620d",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.36Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=%28kube_statefulset_status_replicas_ready%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+%21%3D+kube_statefulset_replicas%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%29+and+%28changes%28kube_statefulset_status_replicas_updated%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%5B10m%5D%29+%3D%3D+0%29&g0.tab=1",
+    "labels": {
+      "alertname": "KubeStatefulSetReplicasMismatch",
+      "container": "kube-state-metrics",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "pod": "kpstack-kube-state-metrics-5c56d48f44-lz25b",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning",
+      "statefulset": "elasticsearch"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Pod elk/logstash-78799cbffb-tbtnj (logstash) is in waiting state (reason: \"CrashLoopBackOff\") on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepodcrashlooping",
+      "summary": "Pod is crash looping."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "2af81322a8231528",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T22:20:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.354Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=max_over_time%28kube_pod_container_status_waiting_reason%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%2Creason%3D%22CrashLoopBackOff%22%7D%5B5m%5D%29+%3E%3D+1&g0.tab=1",
+    "labels": {
+      "alertname": "KubePodCrashLooping",
+      "container": "logstash",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "elk",
+      "pod": "logstash-78799cbffb-tbtnj",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "reason": "CrashLoopBackOff",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning",
+      "uid": "8060340a-d0e3-49b5-afbd-c91b74baddcb"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Pod visualog/elasticsearch-0 (elasticsearch) is in waiting state (reason: \"CrashLoopBackOff\") on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepodcrashlooping",
+      "summary": "Pod is crash looping."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "372037e5f23699bf",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T18:28:56.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.354Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=max_over_time%28kube_pod_container_status_waiting_reason%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%2Creason%3D%22CrashLoopBackOff%22%7D%5B5m%5D%29+%3E%3D+1&g0.tab=1",
+    "labels": {
+      "alertname": "KubePodCrashLooping",
+      "container": "elasticsearch",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "pod": "elasticsearch-0",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "reason": "CrashLoopBackOff",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning",
+      "uid": "bb32b230-56e9-4dc1-a7e4-b796825ce760"
+    }
+  },
+  {
+    "annotations": {
+      "description": "100% of the kube-proxy/kpstack-kube-prometheus-st-kube-proxy targets in kube-system namespace are down.",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/general/targetdown",
+      "summary": "One or more targets are unreachable."
+    },
+    "endsAt": "2025-10-17T22:45:20.48Z",
+    "fingerprint": "5186cda7e4a68463",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:49:50.48Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:41:35.997Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=100+%2A+%28count+by+%28cluster%2C+job%2C+namespace%2C+service%29+%28up+%3D%3D+0%29+%2F+count+by+%28cluster%2C+job%2C+namespace%2C+service%29+%28up%29%29+%3E+10&g0.tab=1",
+    "labels": {
+      "alertname": "TargetDown",
+      "job": "kube-proxy",
+      "namespace": "kube-system",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-prometheus-st-kube-proxy",
+      "severity": "warning"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Deployment default/doctrine-demo has not matched the expected number of replicas for longer than 15 minutes on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubedeploymentreplicasmismatch",
+      "summary": "Deployment has not matched the expected number of replicas."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "5c1b78e79e2dfae3",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.359Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=%28kube_deployment_spec_replicas%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+%3E+kube_deployment_status_replicas_available%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%29+and+%28changes%28kube_deployment_status_replicas_updated%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%5B10m%5D%29+%3D%3D+0%29&g0.tab=1",
+    "labels": {
+      "alertname": "KubeDeploymentReplicasMismatch",
+      "container": "kube-state-metrics",
+      "deployment": "doctrine-demo",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "default",
+      "pod": "kpstack-kube-state-metrics-5c56d48f44-lz25b",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Prometheus monitoring/prometheus-kpstack-kube-prometheus-st-prometheus-0 has failed to evaluate 9 rules in the last 5m.",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusrulefailures",
+      "summary": "Prometheus is failing rule evaluations."
+    },
+    "endsAt": "2025-10-17T22:46:33.459Z",
+    "fingerprint": "62519141b8476bbe",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:55:33.459Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:54.044Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=increase%28prometheus_rule_evaluation_failures_total%7Bjob%3D%22kpstack-kube-prometheus-st-prometheus%22%2Cnamespace%3D%22monitoring%22%7D%5B5m%5D%29+%3E+0&g0.tab=1",
+    "labels": {
+      "alertname": "PrometheusRuleFailures",
+      "container": "prometheus",
+      "endpoint": "http-web",
+      "instance": "10.244.0.9:9090",
+      "job": "kpstack-kube-prometheus-st-prometheus",
+      "namespace": "monitoring",
+      "pod": "prometheus-kpstack-kube-prometheus-st-prometheus-0",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "rule_group": "/etc/prometheus/rules/prometheus-kpstack-kube-prometheus-st-prometheus-rulefiles-0/monitoring-kpstack-kube-prometheus-st-kubernetes-resources-e9108946-31b6-41f8-8925-3d5192ca3f0b.yaml;kubernetes-resources",
+      "service": "kpstack-kube-prometheus-st-prometheus",
+      "severity": "critical"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Pod visualog/logstash-58d655cc86-hrttz (logstash) is in waiting state (reason: \"CrashLoopBackOff\") on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepodcrashlooping",
+      "summary": "Pod is crash looping."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "657bef6920478d17",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:56:56.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.354Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=max_over_time%28kube_pod_container_status_waiting_reason%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%2Creason%3D%22CrashLoopBackOff%22%7D%5B5m%5D%29+%3E%3D+1&g0.tab=1",
+    "labels": {
+      "alertname": "KubePodCrashLooping",
+      "container": "logstash",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "pod": "logstash-58d655cc86-hrttz",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "reason": "CrashLoopBackOff",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning",
+      "uid": "a9f5d07d-900e-45f7-a3e3-97fdab186d35"
+    }
+  },
+  {
+    "annotations": {
+      "description": "KubeControllerManager has disappeared from Prometheus target discovery.",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubecontrollermanagerdown",
+      "summary": "Target disappeared from Prometheus target discovery."
+    },
+    "endsAt": "2025-10-17T22:46:28.104Z",
+    "fingerprint": "6601333ad54ee4c8",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:28.104Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:48.554Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=absent%28up%7Bjob%3D%22kube-controller-manager%22%7D+%3D%3D+1%29&g0.tab=1",
+    "labels": {
+      "alertname": "KubeControllerManagerDown",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "severity": "critical"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Deployment visualog/logstash has not matched the expected number of replicas for longer than 15 minutes on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubedeploymentreplicasmismatch",
+      "summary": "Deployment has not matched the expected number of replicas."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "69f485bbefc7db0d",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.359Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=%28kube_deployment_spec_replicas%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+%3E+kube_deployment_status_replicas_available%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%29+and+%28changes%28kube_deployment_status_replicas_updated%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%5B10m%5D%29+%3D%3D+0%29&g0.tab=1",
+    "labels": {
+      "alertname": "KubeDeploymentReplicasMismatch",
+      "container": "kube-state-metrics",
+      "deployment": "logstash",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "pod": "kpstack-kube-state-metrics-5c56d48f44-lz25b",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning"
+    }
+  },
+  {
+    "annotations": {
+      "description": "etcd cluster \"kube-etcd\": members are down (1).",
+      "summary": "etcd cluster members are down."
+    },
+    "endsAt": "2025-10-17T22:46:27.654Z",
+    "fingerprint": "6e2b71bdd90ea72d",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:59:27.654Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:48.147Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=max+without+%28endpoint%29+%28sum+without+%28instance%2C+pod%29+%28up%7Bjob%3D~%22.%2Aetcd.%2A%22%7D+%3D%3D+bool+0%29+or+count+without+%28To%29+%28sum+without+%28instance%2C+pod%29+%28rate%28etcd_network_peer_sent_failures_total%7Bjob%3D~%22.%2Aetcd.%2A%22%7D%5B2m%5D%29%29+%3E+0.01%29%29+%3E+0&g0.tab=1",
+    "labels": {
+      "alertname": "etcdMembersDown",
+      "job": "kube-etcd",
+      "namespace": "kube-system",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-prometheus-st-kube-etcd",
+      "severity": "warning"
+    }
+  },
+  {
+    "annotations": {
+      "description": "100% of the kube-scheduler/kpstack-kube-prometheus-st-kube-scheduler targets in kube-system namespace are down.",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/general/targetdown",
+      "summary": "One or more targets are unreachable."
+    },
+    "endsAt": "2025-10-17T22:45:20.48Z",
+    "fingerprint": "6fc7eb16406116ab",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:49:50.48Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:41:35.997Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=100+%2A+%28count+by+%28cluster%2C+job%2C+namespace%2C+service%29+%28up+%3D%3D+0%29+%2F+count+by+%28cluster%2C+job%2C+namespace%2C+service%29+%28up%29%29+%3E+10&g0.tab=1",
+    "labels": {
+      "alertname": "TargetDown",
+      "job": "kube-scheduler",
+      "namespace": "kube-system",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-prometheus-st-kube-scheduler",
+      "severity": "warning"
+    }
+  },
+  {
+    "annotations": {
+      "description": "100% of the kube-controller-manager/kpstack-kube-prometheus-st-kube-controller-manager targets in kube-system namespace are down.",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/general/targetdown",
+      "summary": "One or more targets are unreachable."
+    },
+    "endsAt": "2025-10-17T22:45:20.48Z",
+    "fingerprint": "7de3d3d744519f3b",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:49:50.48Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:41:35.997Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=100+%2A+%28count+by+%28cluster%2C+job%2C+namespace%2C+service%29+%28up+%3D%3D+0%29+%2F+count+by+%28cluster%2C+job%2C+namespace%2C+service%29+%28up%29%29+%3E+10&g0.tab=1",
+    "labels": {
+      "alertname": "TargetDown",
+      "job": "kube-controller-manager",
+      "namespace": "kube-system",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-prometheus-st-kube-controller-manager",
+      "severity": "warning"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Deployment visualog/kibana has not matched the expected number of replicas for longer than 15 minutes on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubedeploymentreplicasmismatch",
+      "summary": "Deployment has not matched the expected number of replicas."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "807961a196c30132",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T20:41:56.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.359Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=%28kube_deployment_spec_replicas%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+%3E+kube_deployment_status_replicas_available%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%29+and+%28changes%28kube_deployment_status_replicas_updated%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%5B10m%5D%29+%3D%3D+0%29&g0.tab=1",
+    "labels": {
+      "alertname": "KubeDeploymentReplicasMismatch",
+      "container": "kube-state-metrics",
+      "deployment": "kibana",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "pod": "kpstack-kube-state-metrics-5c56d48f44-lz25b",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning"
+    }
+  },
+  {
+    "annotations": {
+      "description": "KubeProxy has disappeared from Prometheus target discovery.",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeproxydown",
+      "summary": "Target disappeared from Prometheus target discovery."
+    },
+    "endsAt": "2025-10-17T22:46:23.922Z",
+    "fingerprint": "9be181f4199dbaf9",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:23.922Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:44.374Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=absent%28up%7Bjob%3D%22kube-proxy%22%7D+%3D%3D+1%29&g0.tab=1",
+    "labels": {
+      "alertname": "KubeProxyDown",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "severity": "critical"
+    }
+  },
+  {
+    "annotations": {
+      "description": "pod/doctrine-demo-b8d86f44-br2z6 in namespace default on container app has been in waiting state for longer than 1 hour. (reason: \"InvalidImageName\") on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubecontainerwaiting",
+      "summary": "Pod container waiting longer than 1 hour"
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "a4485724ba8adf69",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T13:52:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.363Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=kube_pod_container_status_waiting_reason%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%2Creason%21%3D%22CrashLoopBackOff%22%7D+%3E+0&g0.tab=1",
+    "labels": {
+      "alertname": "KubeContainerWaiting",
+      "container": "app",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "default",
+      "pod": "doctrine-demo-b8d86f44-br2z6",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "reason": "InvalidImageName",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning",
+      "uid": "f9bc84d6-f611-4980-b008-ef613093bc53"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Pod visualog/logstash-5474fb9978-75q4g (logstash) is in waiting state (reason: \"CrashLoopBackOff\") on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepodcrashlooping",
+      "summary": "Pod is crash looping."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "acd852c2ce084dce",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:55:56.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.354Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=max_over_time%28kube_pod_container_status_waiting_reason%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%2Creason%3D%22CrashLoopBackOff%22%7D%5B5m%5D%29+%3E%3D+1&g0.tab=1",
+    "labels": {
+      "alertname": "KubePodCrashLooping",
+      "container": "logstash",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "pod": "logstash-5474fb9978-75q4g",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "reason": "CrashLoopBackOff",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning",
+      "uid": "ded90ccb-c026-44d8-b1db-7033508a3be8"
+    }
+  },
+  {
+    "annotations": {
+      "description": "This is an alert meant to ensure that the entire alerting pipeline is functional.\nThis alert is always firing, therefore it should always be firing in Alertmanager\nand always fire against a receiver. There are integrations with various notification\nmechanisms that send a notification when this alert is not firing. For example the\n\"DeadMansSnitch\" integration in PagerDuty.\n",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/general/watchdog",
+      "summary": "An alert that should always be firing to certify that Alertmanager is working properly."
+    },
+    "endsAt": "2025-10-17T22:45:20.48Z",
+    "fingerprint": "ad4242f2b5a2d592",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:39:20.48Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:41:36.004Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=vector%281%29&g0.tab=1",
+    "labels": {
+      "alertname": "Watchdog",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "severity": "none"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Rollout of deployment visualog/logstash is not progressing for longer than 15 minutes on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubedeploymentrolloutstuck",
+      "summary": "Deployment rollout is not progressing."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "ada8cf425cfdd936",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.36Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=kube_deployment_status_condition%7Bcondition%3D%22Progressing%22%2Cjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%2Cstatus%3D%22false%22%7D+%21%3D+0&g0.tab=1",
+    "labels": {
+      "alertname": "KubeDeploymentRolloutStuck",
+      "condition": "Progressing",
+      "container": "kube-state-metrics",
+      "deployment": "logstash",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "pod": "kpstack-kube-state-metrics-5c56d48f44-lz25b",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "reason": "ProgressDeadlineExceeded",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning",
+      "status": "false"
+    }
+  },
+  {
+    "annotations": {
+      "description": "100% of the kube-etcd/kpstack-kube-prometheus-st-kube-etcd targets in kube-system namespace are down.",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/general/targetdown",
+      "summary": "One or more targets are unreachable."
+    },
+    "endsAt": "2025-10-17T22:45:20.48Z",
+    "fingerprint": "affc6f60b4e8ca03",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:49:50.48Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:41:35.997Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=100+%2A+%28count+by+%28cluster%2C+job%2C+namespace%2C+service%29+%28up+%3D%3D+0%29+%2F+count+by+%28cluster%2C+job%2C+namespace%2C+service%29+%28up%29%29+%3E+10&g0.tab=1",
+    "labels": {
+      "alertname": "TargetDown",
+      "job": "kube-etcd",
+      "namespace": "kube-system",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-prometheus-st-kube-etcd",
+      "severity": "warning"
+    }
+  },
+  {
+    "annotations": {
+      "description": "100% of Alertmanager instances within the  cluster have restarted at least 5 times in the last 10m.",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/alertmanager/alertmanagerclustercrashlooping",
+      "summary": "Half or more of the Alertmanager instances within the same cluster are crashlooping."
+    },
+    "endsAt": "2025-10-17T22:45:10.416Z",
+    "fingerprint": "b192794cca0810d2",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:48:10.416Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:41:26.007Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=%28count+by+%28namespace%2C+service%2C+cluster%29+%28changes%28process_start_time_seconds%7Bcontainer%3D%22alertmanager%22%2Cjob%3D%22kpstack-kube-prometheus-st-alertmanager%22%2Cnamespace%3D%22monitoring%22%7D%5B10m%5D%29+%3E+4%29+%2F+count+by+%28namespace%2C+service%2C+cluster%29+%28up%7Bcontainer%3D%22alertmanager%22%2Cjob%3D%22kpstack-kube-prometheus-st-alertmanager%22%2Cnamespace%3D%22monitoring%22%7D%29%29+%3E%3D+0.5&g0.tab=1",
+    "labels": {
+      "alertname": "AlertmanagerClusterCrashlooping",
+      "namespace": "monitoring",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-prometheus-st-alertmanager",
+      "severity": "critical"
+    }
+  },
+  {
+    "annotations": {
+      "description": "etcd cluster \"kube-etcd\": insufficient members (0).",
+      "summary": "etcd cluster has insufficient number of members."
+    },
+    "endsAt": "2025-10-17T22:46:27.654Z",
+    "fingerprint": "b81028b4d694fc96",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:42:27.654Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:48.165Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=sum+without+%28instance%2C+pod%29+%28up%7Bjob%3D~%22.%2Aetcd.%2A%22%7D+%3D%3D+bool+1%29+%3C+%28%28count+without+%28instance%2C+pod%29+%28up%7Bjob%3D~%22.%2Aetcd.%2A%22%7D%29+%2B+1%29+%2F+2%29&g0.tab=1",
+    "labels": {
+      "alertname": "etcdInsufficientMembers",
+      "endpoint": "http-metrics",
+      "job": "kube-etcd",
+      "namespace": "kube-system",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-prometheus-st-kube-etcd",
+      "severity": "critical"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Pod visualog/fluentd-sbfzj (fluentd) is in waiting state (reason: \"CrashLoopBackOff\") on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepodcrashlooping",
+      "summary": "Pod is crash looping."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "bc14a70481ba4cf1",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T12:46:56.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.354Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=max_over_time%28kube_pod_container_status_waiting_reason%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%2Creason%3D%22CrashLoopBackOff%22%7D%5B5m%5D%29+%3E%3D+1&g0.tab=1",
+    "labels": {
+      "alertname": "KubePodCrashLooping",
+      "container": "fluentd",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "pod": "fluentd-sbfzj",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "reason": "CrashLoopBackOff",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning",
+      "uid": "5be76ee9-5d9a-4b45-a67b-c4192a0c3fc8"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Deployment elk/logstash has not matched the expected number of replicas for longer than 15 minutes on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubedeploymentreplicasmismatch",
+      "summary": "Deployment has not matched the expected number of replicas."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "d297fdc2df57625b",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T13:52:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.359Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=%28kube_deployment_spec_replicas%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+%3E+kube_deployment_status_replicas_available%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%29+and+%28changes%28kube_deployment_status_replicas_updated%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%5B10m%5D%29+%3D%3D+0%29&g0.tab=1",
+    "labels": {
+      "alertname": "KubeDeploymentReplicasMismatch",
+      "container": "kube-state-metrics",
+      "deployment": "logstash",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "elk",
+      "pod": "kpstack-kube-state-metrics-5c56d48f44-lz25b",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Pod visualog/kibana-7bb7f6dd97-l5r7s (kibana) is in waiting state (reason: \"CrashLoopBackOff\") on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepodcrashlooping",
+      "summary": "Pod is crash looping."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "d5cd4a00e9178a2d",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.354Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=max_over_time%28kube_pod_container_status_waiting_reason%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%2Creason%3D%22CrashLoopBackOff%22%7D%5B5m%5D%29+%3E%3D+1&g0.tab=1",
+    "labels": {
+      "alertname": "KubePodCrashLooping",
+      "container": "kibana",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "pod": "kibana-7bb7f6dd97-l5r7s",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "reason": "CrashLoopBackOff",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning",
+      "uid": "cbd3e388-88cb-4aac-ab27-494dca1954ca"
+    }
+  },
+  {
+    "annotations": {
+      "description": "KubeScheduler has disappeared from Prometheus target discovery.",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeschedulerdown",
+      "summary": "Target disappeared from Prometheus target discovery."
+    },
+    "endsAt": "2025-10-17T22:45:08.615Z",
+    "fingerprint": "e4b09f513eea7ffe",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:08.615Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:41:24.12Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=absent%28up%7Bjob%3D%22kube-scheduler%22%7D+%3D%3D+1%29&g0.tab=1",
+    "labels": {
+      "alertname": "KubeSchedulerDown",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "severity": "critical"
+    }
+  },
+  {
+    "annotations": {
+      "description": "Pod monitoring/crashy (crashy) is in waiting state (reason: \"CrashLoopBackOff\") on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepodcrashlooping",
+      "summary": "Pod is crash looping."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "f019661c76c3b841",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.354Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=max_over_time%28kube_pod_container_status_waiting_reason%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%2Creason%3D%22CrashLoopBackOff%22%7D%5B5m%5D%29+%3E%3D+1&g0.tab=1",
+    "labels": {
+      "alertname": "KubePodCrashLooping",
+      "container": "crashy",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "monitoring",
+      "pod": "crashy",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "reason": "CrashLoopBackOff",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning",
+      "uid": "9576929f-087d-4f66-bad4-3504a1fc5fff"
+    }
+  },
+  {
+    "annotations": {
+      "description": "DaemonSet visualog/fluentd has not finished or progressed for at least 15m on cluster .",
+      "runbook_url": "https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubedaemonsetrolloutstuck",
+      "summary": "DaemonSet rollout is stuck."
+    },
+    "endsAt": "2025-10-17T22:46:26.864Z",
+    "fingerprint": "fc338afca72ec218",
+    "receivers": [
+      {
+        "name": "null"
+      }
+    ],
+    "startsAt": "2025-10-17T07:54:26.864Z",
+    "status": {
+      "inhibitedBy": [],
+      "mutedBy": [],
+      "silencedBy": [],
+      "state": "active"
+    },
+    "updatedAt": "2025-10-17T22:42:47.362Z",
+    "generatorURL": "http://kpstack-kube-prometheus-st-prometheus.monitoring:9090/graph?g0.expr=%28%28kube_daemonset_status_current_number_scheduled%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+%21%3D+kube_daemonset_status_desired_number_scheduled%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%29+or+%28kube_daemonset_status_number_misscheduled%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+%21%3D+0%29+or+%28kube_daemonset_status_updated_number_scheduled%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+%21%3D+kube_daemonset_status_desired_number_scheduled%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%29+or+%28kube_daemonset_status_number_available%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D+%21%3D+kube_daemonset_status_desired_number_scheduled%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%29%29+and+%28changes%28kube_daemonset_status_updated_number_scheduled%7Bjob%3D%22kube-state-metrics%22%2Cnamespace%3D~%22.%2A%22%7D%5B5m%5D%29+%3D%3D+0%29&g0.tab=1",
+    "labels": {
+      "alertname": "KubeDaemonSetRolloutStuck",
+      "container": "kube-state-metrics",
+      "daemonset": "fluentd",
+      "endpoint": "http",
+      "instance": "10.244.0.5:8080",
+      "job": "kube-state-metrics",
+      "namespace": "visualog",
+      "pod": "kpstack-kube-state-metrics-5c56d48f44-lz25b",
+      "prometheus": "monitoring/kpstack-kube-prometheus-st-prometheus",
+      "service": "kpstack-kube-state-metrics",
+      "severity": "warning"
+    }
+  }
+]</pre></div>
+</div>
+
+<h2>2) Graphiques (8h)</h2>
+<div class='grid'><div class='card'><img src='images/panel_11.png' width='100%'><div class='caption'>panel_11.png</div></div>
+<div class='card'><img src='images/panel_12.png' width='100%'><div class='caption'>panel_12.png</div></div>
+<div class='card'><img src='images/panel_13.png' width='100%'><div class='caption'>panel_13.png</div></div>
+<div class='card'><img src='images/panel_14.png' width='100%'><div class='caption'>panel_14.png</div></div>
+<div class='card'><img src='images/panel_15.png' width='100%'><div class='caption'>panel_15.png</div></div>
+<div class='card'><img src='images/panel_16.png' width='100%'><div class='caption'>panel_16.png</div></div></div>
+
+<h2>3) Tableaux de synthèse (8h)</h2>
+<div class='grid'>
+  <div class='card'><h3>RPS par route (avg/max/last)</h3><div class=small>aucune donnée</div></div>
+  <div class='card'><h3>Latence p95 (global)</h3><div class=small>aucune donnée</div></div>
+  <div class='card'><h3>Erreurs 5xx par route</h3><div class=small>aucune donnée</div></div>
+  <div class='card'><h3>CPU (pods app)</h3><table><thead><tr><th>series</th><th>last</th><th>max</th><th>avg</th></tr></thead><tbody><tr><td>pod=doctrine-demo-6f7d59bb5d-4rzf8</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>pod=doctrine-demo-6f7d59bb5d-ndfkx</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>pod=doctrine-demo-6f7d59bb5d-zlkjc</td><td>0</td><td>0.0001</td><td>0</td></tr>
+<tr><td>pod=doctrine-demo-7f59449c44-vbzjg</td><td>0.043</td><td>0.1173</td><td>0.0388</td></tr>
+<tr><td>pod=doctrine-demo-b8d86f44-br2z6</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></div>
+  <div class='card'><h3>Mémoire (pods app)</h3><table><thead><tr><th>series</th><th>last</th><th>max</th><th>avg</th></tr></thead><tbody><tr><td>pod=doctrine-demo-6f7d59bb5d-4rzf8</td><td>225280</td><td>225280</td><td>225280</td></tr>
+<tr><td>pod=doctrine-demo-6f7d59bb5d-ndfkx</td><td>221184</td><td>221184</td><td>221184</td></tr>
+<tr><td>pod=doctrine-demo-6f7d59bb5d-xt7qd</td><td>4100096</td><td>4100096</td><td>4100096</td></tr>
+<tr><td>pod=doctrine-demo-6f7d59bb5d-zlkjc</td><td>221184</td><td>221184</td><td>220238.7692</td></tr>
+<tr><td>pod=doctrine-demo-7f59449c44-vbzjg</td><td>29564928</td><td>30420992</td><td>28830077.4693</td></tr>
+<tr><td>pod=doctrine-demo-b8d86f44-br2z6</td><td>217088</td><td>217088</td><td>217088</td></tr></tbody></table></div>
+</div>
+
+<div class='small'>Datasource Grafana: http://kpstack-kube-prometheus-st-prometheus.monitoring.svc:9090</div>
+</body></html>

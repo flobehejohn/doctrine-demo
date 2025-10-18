@@ -1,0 +1,18 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: doctrine-demo-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: doctrine-demo-alerts
+    rules:
+    - alert: HighP95Latency
+      expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{route="/search"}[2m])) by (le)) > 0.3
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "p95 search latency > 300ms"
+        description: "p95 over last 2m is {{ $value }}s"
