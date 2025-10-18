@@ -96,46 +96,41 @@ function First-NonEmpty([string[]]$cands) {
     return $null
 }
 
-function Summarize($s) {
-    if ($null -eq $s -or $null -eq $s.metric) {
-        return [pscustomobject]@{ series = "unknown"; last = $null; max = $null; avg = $null }
-    }
-    $names = ($s.metric | Get-Member -MemberType NoteProperty | % Name)
-    $pairs = @(); foreach ($n in $names) { $pairs += "$n=$($s.metric.$n)" }
-    $label = ($pairs -join ",")
-    $vals = @(); foreach ($v in $s.values) { $d = [double]$v[1]; if (-not [double]::IsNaN($d)) { $vals += $d } }
-    if ($vals.Count -eq 0) { return [pscustomobject]@{ series = $label; last = $null; max = $null; avg = $null } }
-    [pscustomobject]@{
-        series = $label
-        last   = [Math]::Round($vals[-1], 4)
-        max    = [Math]::Round(($vals | Measure-Object -Maximum).Maximum, 4)
-        avg    = [Math]::Round(($vals | Measure-Object -Average).Average, 4)
-    }
+function Summarize($s){
+  if ($null -eq $s -or $null -eq $s.metric) {
+    return [pscustomobject]@{ series="unknown"; last=$null; max=$null; avg=$null }
+  }
+  $names = ($s.metric | Get-Member -MemberType NoteProperty | % Name)
+  $pairs = foreach($n in $names){ "$n=$($s.metric.$n)" }
+  $label = ($pairs -join ",")
+  $vals = @()
+  foreach($v in $s.values){ $d=[double]$v[1]; if(-not [double]::IsNaN($d)){ $vals += $d } }
+  if($vals.Count -eq 0){ return [pscustomobject]@{ series=$label; last=$null; max=$null; avg=$null } }
+  [pscustomobject]@{
+    series=$label
+    last=[Math]::Round($vals[-1],4)
+    max=[Math]::Round(($vals|Measure-Object -Maximum).Maximum,4)
+    avg=[Math]::Round(($vals|Measure-Object -Average).Average,4)
+  }
 }
 
 function Write-ZeroCsv($path) { @([pscustomobject]@{series = "none"; last = 0; max = 0; avg = 0 }) | Export-Csv -NoTypeInformation -Encoding UTF8 $path }
 
 # --- Candidats de requêtes (élargis)
 $C_RPS = @(
-    'sum by (method,route,path,uri,handler) (rate((http_requests_total OR http_server_requests_seconds_count)[1m]))',
-    'sum(rate(http_requests_total[1m]))',
-    'sum by (status) (rate(prometheus_http_requests_total[1m]))' # dernier recours (toujours présent)
+ 'sum by (method,route,path,uri,handler) (rate((http_requests_total OR http_server_requests_seconds_count)[1m]))',
+ 'sum by (path) (rate(http_server_requests_seconds_count[1m]))',
+ 'sum(rate(http_requests_total[1m])) by (route)'
 )
 
 $C_P95 = @(
-    'histogram_quantile(0.95, sum by (le,route,path,uri,handler) (rate((http_request_duration_seconds_bucket OR http_server_requests_seconds_bucket OR request_duration_seconds_bucket)[5m])))',
-    'histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))',
-    'max_over_time(http_request_duration_seconds{quantile="0.95"}[5m])',
-    'max_over_time(http_server_requests_seconds{quantile="0.95"}[5m])'
+ 'histogram_quantile(0.95, sum by (le,route,path,uri,handler) (rate((http_request_duration_seconds_bucket OR http_server_requests_seconds_bucket OR request_duration_seconds_bucket)[5m])))',
+ 'max(http_request_duration_seconds{quantile="0.95"})'
 )
 
 $C_5XX = @(
-    'sum by (route,path,uri,handler,method) (rate(http_requests_total{code=~"5.."}[5m]))',
-    'sum by (status) (rate(http_requests_total{status=~"5.."}[5m]))',
-    'sum by (code) (rate(http_server_requests_seconds_count{status=~"5.."}[5m]))',
-    # fallbacks cluster (pour ne jamais rester vide en démo) :
-    'sum by (code) (rate(apiserver_request_total{code=~"5.."}[5m]))',
-    'sum by (code) (rate(prometheus_http_requests_total{code=~"5.."}[5m]))'
+ 'sum by (route,path,uri,handler,method) (rate((http_requests_total{code=~"5.."} OR http_requests_total{status=~"5.."} OR http_server_requests_seconds_count{status=~"5.."})[5m]))',
+ 'sum by (verb,resource,code) (rate(apiserver_request_total{code=~"5.."}[5m]))'
 )
 
 $C_CPU = @('sum by (pod) (rate(container_cpu_usage_seconds_total{pod=~"doctrine-demo.*"}[5m]))')
