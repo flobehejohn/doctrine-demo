@@ -1,0 +1,62 @@
+version: 2.1
+
+jobs:
+  build_and_push:
+    docker:
+      - image: cimg/node:20.12
+    environment:
+      IMAGE_NAME: ghcr.io/${ORG}/doctrine-demo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-npm-{{ checksum "app/package-lock.json" }}
+            - v1-npm-
+      - run:
+          name: Install dependencies
+          command: npm ci --omit=dev --prefix app
+      - save_cache:
+          key: v1-npm-{{ checksum "app/package-lock.json" }}
+          paths:
+            - app/node_modules
+      - run:
+          name: Optional unit tests
+          command: npm test --prefix app || echo "no tests yet"
+      - setup_remote_docker
+      - run:
+          name: Build & push GHCR image
+          command: |
+            echo "${CR_PAT}" | docker login ghcr.io -u "${GH_USER}" --password-stdin
+            docker build -f app/Dockerfile -t "${IMAGE_NAME}:${CIRCLE_SHA1}" -t "${IMAGE_NAME}:latest" app
+            docker push "${IMAGE_NAME}:${CIRCLE_SHA1}"
+            docker push "${IMAGE_NAME}:latest"
+  deploy_k8s:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Configure kubectl
+          command: |
+            echo "${KUBECONFIG_B64}" | base64 -d > kubeconfig
+            export KUBECONFIG=$PWD/kubeconfig
+            kubectl version --client
+            kubectl config current-context || true
+      - run:
+          name: Apply manifests
+          command: |
+            export KUBECONFIG=$PWD/kubeconfig
+            kubectl apply -f k8s/
+            kubectl apply -f monitoring/podmonitor-app.yaml
+            kubectl apply -f monitoring/prometheusrule.yaml
+            kubectl rollout status deploy/doctrine-demo --timeout=180s
+
+workflows:
+  demo:
+    jobs:
+      - build_and_push:
+          context: org-global # Configure a CircleCI context with GH_USER / CR_PAT / ORG
+      - deploy_k8s:
+          requires:
+            - build_and_push
+          context: org-global # Same context must also provide KUBECONFIG_B64

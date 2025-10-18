@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+**/.DS_Store
+**/.vscode
+**/.idea
+**/.git
+terraform/.terraform
+demo.gif
+monitoring/grafana/provisioning/
+*.log
+coverage
+dist
+build
