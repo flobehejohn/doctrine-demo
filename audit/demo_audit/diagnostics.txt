@@ -1,20 +1,20 @@
-2025-10-19 21:06:58Z  KO http://localhost:3000/api/health -> Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée. (localhost:3000)
-2025-10-19 21:07:04Z  KO http://localhost:9090/-/healthy -> Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée. (localhost:9090)
-2025-10-19 21:07:10Z  KO http://localhost:9093/-/healthy -> Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée. (localhost:9093)
-2025-10-19 21:07:21Z  Dashboard UID=devops-proof-auto slug=devops-proof-node-api-auto
-2025-10-19 21:07:27Z  Renderer KO: The request was canceled due to the configured HttpClient.Timeout of 6 seconds elapsing.
-2025-10-19 21:07:48Z  PNG ok p1 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_01.png
-2025-10-19 21:07:59Z  PNG ok p2 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_02.png
-2025-10-19 21:08:10Z  PNG ok p3 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_03.png
-2025-10-19 21:08:20Z  PNG ok p4 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_04.png
-2025-10-19 21:08:32Z  PNG ok p5 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_05.png
-2025-10-19 21:09:04Z  PNG ok p6 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_06.png
-2025-10-19 21:09:04Z  Panels KO: 0
-2025-10-19 21:09:04Z  Query fail: sum by (method,route,path,uri,handler) (rate((http_requests_total OR http_server_requests_seconds_count)[1m])) -> Response status code does not indicate success: 400 (Bad Request).
-2025-10-19 21:09:04Z  Query fail: histogram_quantile(0.95, sum by (le,route,path,uri,handler) (rate((http_request_duration_seconds_bucket OR http_server_requests_seconds_bucket OR request_duration_seconds_bucket)[5m]))) -> Response status code does not indicate success: 400 (Bad Request).
-2025-10-19 21:09:04Z  Query fail: sum by (route,path,uri,handler,method) (rate((http_requests_total{code=~"5.."} OR http_requests_total{status=~"5.."} OR http_server_requests_seconds_count{status=~"5.."})[5m])) -> Response status code does not indicate success: 400 (Bad Request).
-2025-10-19 21:09:06Z  PNG count = 6
-2025-10-19 21:09:06Z  Rows rps=1 p95=1 5xx=8
-2025-10-19 21:09:06Z  Expr RPS = sum(rate(http_requests_total[1m])) by (route)
-2025-10-19 21:09:06Z  Expr P95 = 
-2025-10-19 21:09:06Z  Expr 5XX = sum by (verb,resource,code) (rate(apiserver_request_total{code=~"5.."}[5m]))
+2025-10-19 22:16:49Z  KO http://localhost:3000/api/health -> Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée. (localhost:3000)
+2025-10-19 22:16:55Z  KO http://localhost:9090/-/healthy -> Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée. (localhost:9090)
+2025-10-19 22:17:00Z  KO http://localhost:9093/-/healthy -> Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée. (localhost:9093)
+2025-10-19 22:17:11Z  Dashboard UID=devops-proof-auto slug=devops-proof-e28093-node-api-auto
+2025-10-19 22:17:18Z  Renderer KO: The request was canceled due to the configured HttpClient.Timeout of 6 seconds elapsing.
+2025-10-19 22:17:36Z  PNG ok p1 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_01.png
+2025-10-19 22:17:48Z  PNG ok p2 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_02.png
+2025-10-19 22:18:01Z  PNG ok p3 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_03.png
+2025-10-19 22:18:21Z  PNG ok p4 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_04.png
+2025-10-19 22:18:34Z  PNG ok p5 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_05.png
+2025-10-19 22:18:52Z  PNG ok p6 (t=40) -> C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\demo_audit\images\panel_06.png
+2025-10-19 22:18:52Z  Panels KO: 0
+2025-10-19 22:18:52Z  Query fail: sum by (method,route,path,uri,handler) (rate((http_requests_total OR http_server_requests_seconds_count)[1m])) -> Response status code does not indicate success: 400 (Bad Request).
+2025-10-19 22:18:53Z  Query fail: histogram_quantile(0.95, sum by (le,route,path,uri,handler) (rate((http_request_duration_seconds_bucket OR http_server_requests_seconds_bucket OR request_duration_seconds_bucket)[5m]))) -> Response status code does not indicate success: 400 (Bad Request).
+2025-10-19 22:18:53Z  Query fail: sum by (route,path,uri,handler,method) (rate((http_requests_total{code=~"5.."} OR http_requests_total{status=~"5.."} OR http_server_requests_seconds_count{status=~"5.."})[5m])) -> Response status code does not indicate success: 400 (Bad Request).
+2025-10-19 22:18:55Z  PNG count = 6
+2025-10-19 22:18:55Z  Rows rps=1 p95=1 5xx=8
+2025-10-19 22:18:55Z  Expr RPS = sum(rate(http_requests_total[1m])) by (route)
+2025-10-19 22:18:55Z  Expr P95 = 
+2025-10-19 22:18:55Z  Expr 5XX = sum by (verb,resource,code) (rate(apiserver_request_total{code=~"5.."}[5m]))
