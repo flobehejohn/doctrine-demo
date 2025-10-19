@@ -23,8 +23,8 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: app
-          image: ghcr.io/ORG/doctrine-demo:latest
-          imagePullPolicy: Always
+          image: ghcr.io/codex-ops/doctrine-demo:latest
+          imagePullPolicy: IfNotPresent
           ports: [{ containerPort: 8080 }]
           securityContext:
             allowPrivilegeEscalation: false

@@ -16,6 +16,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: kps-grafana
+            name: kpstack-grafana
             port:
               number: 80
