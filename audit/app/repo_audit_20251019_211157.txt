@@ -1,0 +1,12 @@
+
+===== Aperçu =====
+- Date: 19/10/2025 21:11:57
+- Racine: C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite
+- Sortie: C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\app\repo_audit_20251019_211157.txt
+
+===== Git =====
+- Branch: demo/audit-20251018-0214
+- HEAD: d552943
+
+===== Fin de l'audit =====
+OK ✅ — Audit écrit dans : C:\ATLAS\INBOX\dev\devops\platform_lite\doctrine-demo-platform-lite\audit\app\repo_audit_20251019_211157.txt
