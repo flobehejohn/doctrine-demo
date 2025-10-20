@@ -5,7 +5,7 @@
 [![PowerShell](https://img.shields.io/badge/Automation-PowerShell-5391fe?logo=powershell&logoColor=white)](#run-demo)
 [![Storytelling](https://img.shields.io/badge/Storytelling-DevOps%20Proof-6f42c1)](#preuves)
 
-**But recruteur :** montrer en un coup d’œil ma capacité à **déployer**, **observer** et **raconter** l’état d’une app (Node) sur Kubernetes avec **Prometheus / Grafana / Alertmanager**, dashboards provisionnés, requêtes PromQL, alertes, et **livrables partageables** (PNG, CSV, PDF).  
+**But  :** montrer en un coup d’œil ma capacité à **déployer**, **observer** et **raconter** l’état d’une app (Node) sur Kubernetes avec **Prometheus / Grafana / Alertmanager**, dashboards provisionnés, requêtes PromQL, alertes, et **livrables partageables** (PNG, CSV, PDF).  
 _Extraits d’audit & preuves inclus dans `audit/demo_audit`._ ([rapport HTML/PDF + panneaux Grafana + CSV]).
 
 ## Sommaire
@@ -65,7 +65,7 @@ kubectl apply -f monitoring/podmonitor-app.yaml
 - `CPU` : `sum(rate(container_cpu_usage_seconds_total{pod=~"doctrine-demo.*"}[5m]))`
 - `RAM` : `sum(container_memory_working_set_bytes{pod=~"doctrine-demo.*"})`
 
-##  Preuves livrées (recruteur)
+##  Livrables 
 `audit/demo_audit/`
 - `images/panel_01..06.png` : RPS, p95, 5xx, CPU, RAM, Restarts
 - `rps.csv`, `p95.csv`, `5xx.csv`, `cpu.csv`, `mem.csv` : tableaux de synthèse 8h
