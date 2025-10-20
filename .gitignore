@@ -1,20 +1,26 @@
-# Node/JS
-node_modules/
+# Node / build
+app/node_modules/
 dist/
 build/
-coverage/
 
-# IDE/OS
-.vscode/
+# OS/IDE
 .DS_Store
-Thumbs.db
+.vscode/
 
-# Logs
-*.log
+# Terraform
+**/.terraform/
+**/*.tfstate*
 
-# Artefacts lourds de démo (on ne garde que les livrables finaux)
-audit/demo/images/
-audit/demo/*.zip
-audit/demo/*.csv
-!audit/demo/report.html
-!audit/demo/report.pdf
+# Logs & archives
+**/*.log
+**/*.zip
+
+# Heavy demos à exclure
+audit/**/demo_.gif
+
+# UI captures (prefer curated PNG/GIF exports)
+monitoring/grafana/dashboards/*.jpg
+
+# Legacy audit outputs (keep curated proofs only)
+audit/demo/
+audit/app/repo_audit_*.txt
