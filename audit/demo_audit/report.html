@@ -55,5 +55,41 @@ table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:6
 <tr><td>pod=doctrine-demo-b8d86f44-br2z6</td><td>217088</td><td>217088</td><td>217088</td></tr></tbody></table></div>
 </div>
 
+<h2>4) Cloud Proofs</h2>
+<div class='grid'>
+  <div class='card'>
+    <h3>AWS</h3>
+    <ul>
+      <li><a href='proofs/aws_plan.json'>Plan Terraform (JSON)</a></li>
+      <li><a href='proofs/aws_cost.html'>Coûts Infracost (HTML)</a> / <a href='proofs/aws_cost.txt'>fallback texte</a></li>
+    </ul>
+    <iframe src='proofs/aws_cost.html' title='AWS Cost Breakdown' style='width:100%; height:320px; border:1px solid #ddd;'></iframe>
+    <p class='small'>Générer le HTML avec <code>infracost breakdown --path cloud/aws/terraform</code> après avoir défini <code>INFRACOST_API_KEY</code>.</p>
+  </div>
+  <div class='card'>
+    <h3>Azure</h3>
+    <ul>
+      <li><a href='proofs/azure_plan.json'>Plan Terraform (JSON)</a></li>
+      <li><a href='proofs/azure_cost.html'>Coûts Infracost (HTML)</a> / <a href='proofs/azure_cost.txt'>fallback texte</a></li>
+    </ul>
+    <iframe src='proofs/azure_cost.html' title='Azure Cost Breakdown' style='width:100%; height:320px; border:1px solid #ddd;'></iframe>
+    <p class='small'>Si Infracost n’est pas activé, renseigner <code>INFRACOST_API_KEY</code> puis relancer <code>make azure-plan</code>.</p>
+  </div>
+  <div class='card'>
+    <h3>Snapshots</h3>
+    <ul>
+      <li><a href='proofs/cloud_cli_snapshots/aws_ecr.json'>aws_ecr.json</a></li>
+      <li><a href='proofs/cloud_cli_snapshots/aws_s3.json'>aws_s3.json</a></li>
+      <li><a href='proofs/cloud_cli_snapshots/acr_show.json'>acr_show.json</a></li>
+      <li><a href='proofs/cloud_cli_snapshots/aks_show.json'>aks_show.json</a></li>
+      <li><a href='proofs/cloud_cli_snapshots/k8s_get_nodes.txt'>k8s_get_nodes.txt</a></li>
+      <li><a href='proofs/cloud_cli_snapshots/k8s_get_pods.txt'>k8s_get_pods.txt</a></li>
+      <li><a href='proofs/openstack_services.txt'>openstack_services.txt</a></li>
+      <li><a href='proofs/openstack_endpoints.txt'>openstack_endpoints.txt</a></li>
+    </ul>
+    <p class='small'>Les commandes figurent dans les README Terraform et DevStack.</p>
+  </div>
+</div>
+
 <div class='small'>Datasource Grafana: http://kpstack-kube-prometheus-st-prometheus.monitoring.svc:9090</div>
 </body></html>
