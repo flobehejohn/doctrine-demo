@@ -75,6 +75,27 @@ kubectl apply -f monitoring/podmonitor-app.yaml
 
 Un exemple de rapport généré est visible dans le repo (section Graphiques + Tableaux) pour un partage immédiat.
 
+## ☁️ Cloud Proofs (AWS / Azure / OpenStack)
+- Préparer l’environnement : Terraform ≥1.6, AWS CLI v2, Azure CLI, kubectl, Python 3.11 (`.tool-versions`). Installer les dépendances Python :  
+  `pip install -r scripts/python/requirements.txt`
+- Authentification cloud : `aws configure` ou variables `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`, et `az login` (+ `az account set` si besoin).
+- Générer les plans & coûts :
+  ```bash
+  make aws-plan    # exporte proofs/aws_plan.json (+ HTML si INFRACOST_API_KEY défini)
+  make azure-plan  # exporte proofs/azure_plan.json (+ HTML si INFRACOST_API_KEY défini)
+  ```
+- Collecter les snapshots CLI/Kubernetes :
+  ```bash
+  make proofs
+  ```
+- Scripts Python utilitaires :
+  ```bash
+  python scripts/python/s3_purge_prefix.py --bucket <name> --prefix <path/> [--dry-run]
+  python scripts/python/acr_purge_untagged.py --registry <acr>.azurecr.io --repository <repo> [--older-than-days 7]
+  python scripts/python/k8s_restart_deploy.py --namespace <ns> --name <deployment>
+  ```
+- PoC DevStack : suivre `openstack/devstack/README.md` pour générer `proofs/openstack_*.txt`.
+
 ## 🔖 Traçabilité Git
 - Commit conventionnel : `feat(repo): demo DevOps observability E2E + preuves (Grafana/Prom/AM)`
 - Tags : `demo-v1` + timestamp `audit-YYYYMMDD-HHmm` pour snapshoter l’audit
