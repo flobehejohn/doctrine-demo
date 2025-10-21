@@ -1,0 +1,5 @@
+terraform 1.6.0
+awscli 2.0.0
+azure-cli 2.49.0
+kubectl 1.29.0
+python 3.11.0
