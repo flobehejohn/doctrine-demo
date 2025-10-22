@@ -105,7 +105,17 @@ Un exemple de rapport généré est visible dans le repo (section Graphiques + T
   # (optionnel) make aws-plan && make azure-plan && make proofs
   ```
 
+
+> **Ready to demo (Windows, sans make)**
+> ```powershell
+> az login
+> aws configure set region eu-west-3
+> $env:INFRACOST_API_KEY="TA_CLEF"
+> .\proof-run-nomake.ps1
+> ```
+
 ## 🔖 Traçabilité Git
 - Commit conventionnel : `feat(repo): demo DevOps observability E2E + preuves (Grafana/Prom/AM)`
 - Tags : `demo-v1` + timestamp `audit-YYYYMMDD-HHmm` pour snapshoter l’audit
 - Remote cible : `https://github.com/flobehejohn/doctrine-demo`
+
