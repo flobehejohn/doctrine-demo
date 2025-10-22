@@ -1,4 +1,4 @@
-location = "francecentral"
-project = "doctrine-demo"
+location    = "francecentral"
+project     = "doctrine-demo"
 environment = "poc"
-node_count = 1
+node_count  = 1
