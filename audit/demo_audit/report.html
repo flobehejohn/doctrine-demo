@@ -89,6 +89,33 @@ table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:6
     </ul>
     <p class='small'>Les commandes figurent dans les README Terraform et DevStack.</p>
   </div>
+  <div class='card'>
+    <h3>FinOps & garde-fous</h3>
+    <ul>
+      <li>Tags de coût systématiques (`Project`, `Environment`, `CostCenter`).</li>
+      <li>Budgets / alertes (AWS Budgets, Azure Cost Management).</li>
+      <li>Lifecycle S3 (noncurrent versions expirent sous 30 jours).</li>
+      <li>Tailles de nœuds AKS/EKS (`Standard_B2s`) et ajustements HPA.</li>
+      <li>Autoscaling activable (Cluster Autoscaler / Karpenter).</li>
+      <li>Réservations ou Savings Plans pour charges constantes.</li>
+    </ul>
+  </div>
+</div>
+
+<h2>5) Exigence ↔ Preuve (mapping)</h2>
+<div class='card'>
+  <table>
+    <thead><tr><th>Exigence</th><th>Où le voir</th><th>Fichier(s)</th></tr></thead>
+    <tbody>
+      <tr><td>AWS – ECR créé</td><td>Snapshot CLI</td><td><a href='proofs/cloud_cli_snapshots/aws_ecr.json'>proofs/cloud_cli_snapshots/aws_ecr.json</a></td></tr>
+      <tr><td>AWS – S3 bucket</td><td>Plan Terraform</td><td><a href='proofs/aws_plan.json'>proofs/aws_plan.json</a></td></tr>
+      <tr><td>Azure – ACR</td><td>Snapshot CLI</td><td><a href='proofs/cloud_cli_snapshots/acr_show.json'>proofs/cloud_cli_snapshots/acr_show.json</a></td></tr>
+      <tr><td>Azure – AKS</td><td>Snapshot CLI</td><td><a href='proofs/cloud_cli_snapshots/aks_show.json'>proofs/cloud_cli_snapshots/aks_show.json</a>, <a href='proofs/cloud_cli_snapshots/k8s_get_nodes.txt'>proofs/cloud_cli_snapshots/k8s_get_nodes.txt</a></td></tr>
+      <tr><td>K8s – Pods</td><td>Snapshot CLI</td><td><a href='proofs/cloud_cli_snapshots/k8s_get_pods.txt'>proofs/cloud_cli_snapshots/k8s_get_pods.txt</a></td></tr>
+      <tr><td>OpenStack – Services/Endpoints</td><td>DevStack proofs</td><td><a href='proofs/openstack_services.txt'>proofs/openstack_services.txt</a>, <a href='proofs/openstack_endpoints.txt'>proofs/openstack_endpoints.txt</a></td></tr>
+      <tr><td>FinOps – Coûts estimés</td><td>Iframes coûts</td><td><a href='proofs/aws_cost.html'>proofs/aws_cost.html</a>, <a href='proofs/azure_cost.html'>proofs/azure_cost.html</a></td></tr>
+    </tbody>
+  </table>
 </div>
 
 <div class='small'>Datasource Grafana: http://kpstack-kube-prometheus-st-prometheus.monitoring.svc:9090</div>
