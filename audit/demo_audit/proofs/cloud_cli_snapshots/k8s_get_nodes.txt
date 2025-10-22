@@ -1,0 +1,1 @@
+placeholder: run 'kubectl get nodes' to capture real nodes

@@ -1,0 +1,5 @@
+{
+  "status": "placeholder",
+  "note": "terraform plan for Azure not executed yet",
+  "howto": "run make azure-plan with az login"
+}

@@ -1,0 +1,1 @@
+placeholder: run 'kubectl get pods -A' to capture real pods

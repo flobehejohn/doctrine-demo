@@ -1,0 +1,1 @@
+placeholder: run 'openstack endpoint list' after DevStack to capture endpoints

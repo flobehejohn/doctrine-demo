@@ -1,0 +1,5 @@
+{
+  "status": "placeholder",
+  "clusters": [],
+  "hint": "az aks list -o json > .../aks_show.json"
+}

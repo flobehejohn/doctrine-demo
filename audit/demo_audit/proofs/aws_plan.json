@@ -1,0 +1,5 @@
+{
+  "status": "placeholder",
+  "note": "terraform plan for AWS not executed yet",
+  "howto": "run make aws-plan with AWS creds"
+}

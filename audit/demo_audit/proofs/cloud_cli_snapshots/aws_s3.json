@@ -1,0 +1,5 @@
+{
+  "status": "placeholder",
+  "buckets": [],
+  "hint": "aws s3api list-buckets > .../aws_s3.json"
+}

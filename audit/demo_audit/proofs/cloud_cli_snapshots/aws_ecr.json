@@ -1,0 +1,5 @@
+{
+  "status": "placeholder",
+  "repositories": [],
+  "hint": "aws ecr describe-repositories > .../aws_ecr.json"
+}

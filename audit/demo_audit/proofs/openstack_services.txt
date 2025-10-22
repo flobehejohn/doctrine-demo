@@ -1,0 +1,1 @@
+placeholder: run 'openstack service list' after DevStack to capture services
