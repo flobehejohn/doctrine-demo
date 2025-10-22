@@ -1,5 +1,0 @@
-{
-  "status": "placeholder",
-  "registries": [],
-  "hint": "az acr list -o json > .../acr_show.json"
-}
