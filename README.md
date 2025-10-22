@@ -96,6 +96,15 @@ Un exemple de rapport généré est visible dans le repo (section Graphiques + T
   ```
 - PoC DevStack : suivre `openstack/devstack/README.md` pour générer `proofs/openstack_*.txt`.
 
+## ⚡ Ready to demo
+- Pré-requis : AWS CLI v2, Azure CLI, kubectl, Terraform ≥1.6, Python 3.11, (optionnel) Infracost avec `INFRACOST_API_KEY`.
+- Exécuter la préparation en 3 commandes :
+  ```powershell
+  pip install -r scripts/python/requirements.txt
+  .\proof-run.ps1
+  # (optionnel) make aws-plan && make azure-plan && make proofs
+  ```
+
 ## 🔖 Traçabilité Git
 - Commit conventionnel : `feat(repo): demo DevOps observability E2E + preuves (Grafana/Prom/AM)`
 - Tags : `demo-v1` + timestamp `audit-YYYYMMDD-HHmm` pour snapshoter l’audit
