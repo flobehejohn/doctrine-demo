@@ -1,1 +1,1 @@
-Set INFRACOST_API_KEY to render HTML cost report
+﻿Set INFRACOST_API_KEY to render HTML cost report
