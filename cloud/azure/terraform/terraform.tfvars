@@ -1,0 +1,4 @@
+location = "francecentral"
+project = "doctrine-demo"
+environment = "poc"
+node_count = 1
