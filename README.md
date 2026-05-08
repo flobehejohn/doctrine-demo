@@ -1,121 +1,76 @@
-# Doctrine Demo — DevOps Proof (Observability E2E)
-
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-ready-326ce5?logo=kubernetes&logoColor=white)](#stack)
-[![Prometheus](https://img.shields.io/badge/Prometheus-Grafana%20stack-e6522c?logo=prometheus&logoColor=white)](#dashboards)
-[![PowerShell](https://img.shields.io/badge/Automation-PowerShell-5391fe?logo=powershell&logoColor=white)](#run-demo)
-[![Storytelling](https://img.shields.io/badge/Storytelling-DevOps%20Proof-6f42c1)](#preuves)
-
-**But recruteur :** montrer en un coup d’œil ma capacité à **déployer**, **observer** et **raconter** l’état d’une app (Node) sur Kubernetes avec **Prometheus / Grafana / Alertmanager**, dashboards provisionnés, requêtes PromQL, alertes, et **livrables partageables** (PNG, CSV, PDF).  
-_Extraits d’audit & preuves inclus dans `audit/demo_audit`._ ([rapport HTML/PDF + panneaux Grafana + CSV]).
-
-## Sommaire
-- ⚙️ Stack
-- 🧭 Schéma (vue rapide)
-- 🚀 Rejouer la démo (5 min)
-- 📈 Dashboards & Requêtes clés
-- 📦 Preuves livrées (recruteur)
-- 🔖 Traçabilité Git
-
-## ⚙️ Stack
-- **App** : Node.js + `prom-client` (metrics `/metrics`, `/healthz`)
-- **Container** : Dockerfile non-root (UID 10001), healthcheck
-- **Kubernetes** : Deployment, Service, HPA, PDB, Ingress
-- **Observability** : Prometheus (scrape, rules), Alertmanager (route par défaut), Grafana (datasource & dashboards JSON provisionnés)
-- **Scripting** : PowerShell pour audit, snapshots PNG/CSV, packaging
-- **Infra as Code** : Manifests K8s + dossiers Terraform (eks/k3d)
-
-## 🧭 Schéma (vue rapide)
+# Doctrine Demo — Observability & CI Case Study
+[![Staff CI](https://github.com/flobehejohn/doctrine-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/flobehejohn/doctrine-demo/actions/workflows/ci.yml)
+## Executive Summary
+`doctrine-demo` est une preuve technique DevOps/SRE : une API Node.js conteneurisée, observable par Prometheus/Grafana, déployable sur Kubernetes, et gouvernée par une CI stricte.
+Le repo démontre une chaîne complète : endpoints documentés, métriques Prometheus, SLO, runbook incident, tests contractuels, build Docker, smoke container, artefacts d audit et case study.
+## Ce que ce repo démontre
+- API Node.js instrumentée.
+- Métriques Prometheus exposées sur `/metrics`.
+- Corrélation des requêtes via `X-Request-Id`.
+- Déploiement Docker non-root.
+- Manifests Kubernetes : Deployment, Service, HPA, PDB, Ingress.
+- Observabilité : Prometheus, Grafana, Alertmanager.
+- CI Staff-level : tests contractuels, build image, smoke container, documentation gate, artefacts.
+## Stack
+| Couche | Choix |
+| --- | --- |
+| API | Node.js 20, Express |
+| Sécurité HTTP | Helmet, CORS contrôlé, rate-limit |
+| Logs | pino-http, `X-Request-Id` |
+| Metrics | prom-client, `/metrics` |
+| Container | Dockerfile non-root UID 10001 |
+| Orchestration | Kubernetes |
+| Observabilité | Prometheus, Grafana, Alertmanager |
+| CI | GitHub Actions + CircleCI |
+| Tests | Node native test runner |
+## Architecture rapide
 ```text
-[Users] -> Ingress -> Service (80->8080) -> Pods "doctrine-demo" (Node)
-   |
-   +-> /metrics -----------------------> Prometheus (Kube-Prometheus-Stack)
-                                           |
-                                           +-> Alertmanager (routes)
-                                           +-> Grafana (datasource + dashboards JSON)
+[User] -> Ingress -> Service -> doctrine-demo API
+                                  |-- GET /healthz
+                                  |-- GET /search?query=
+                                  |-- GET /metrics
+                                  +-- logs corrélés
+                                  +-- métriques Prometheus
 ```
-
-## 🚀 Rejouer la démo (5 min)
+## Run local
 ```bash
-# App container
-docker build -t doctrine-demo:local -f Dockerfile .
-docker run -p 8080:8080 doctrine-demo:local
-
-# K8s (extraits)
-kubectl apply -f k8s/sa.yaml
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
-kubectl apply -f k8s/hpa.yaml
-kubectl apply -f k8s/pdb.yaml
-kubectl apply -f k8s/ingress.yaml
-
-# Monitoring
-kubectl apply -f monitoring/grafana/datasources/grafana-datasource-prom.yaml
-kubectl apply -f monitoring/prometheus.yml
-kubectl apply -f monitoring/prometheusrule.yaml
-kubectl apply -f monitoring/alertmanager.yml
-kubectl apply -f monitoring/podmonitor-app.yaml
+npm ci --prefix app
+npm test --prefix app
+npm start --prefix app
 ```
-
-**Astuce incident :** passer `latency_ms` à `300` dans `k8s/deployment.yaml` (ConfigMap) pour déclencher l’alerte p95.
-
-## 📈 Dashboards & Requêtes clés
-- `RPS` : `sum(rate(http_requests_total[1m])) by (route)`
-- `p95` : `histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route))`
-- `5xx` : `sum(rate(http_requests_total{code=~"5.."}[5m])) by (route)`
-- `CPU` : `sum(rate(container_cpu_usage_seconds_total{pod=~"doctrine-demo.*"}[5m]))`
-- `RAM` : `sum(container_memory_working_set_bytes{pod=~"doctrine-demo.*"})`
-
-## 📦 Preuves livrées (recruteur)
-`audit/demo_audit/`
-- `images/panel_01..06.png` : RPS, p95, 5xx, CPU, RAM, Restarts
-- `rps.csv`, `p95.csv`, `5xx.csv`, `cpu.csv`, `mem.csv` : tableaux de synthèse 8h
-- `report.html`, `report.pdf` : rapport prêt à partager (cluster, pods, services, targets & alertes)
-- `alerts.json`, `targets.json` : cibles Prometheus & alertes actives (preuve SRE)
-- `demo.gif` : aperçu animé (si ImageMagick installé lors de l’audit)
-
-Un exemple de rapport généré est visible dans le repo (section Graphiques + Tableaux) pour un partage immédiat.
-
-## ☁️ Cloud Proofs (AWS / Azure / OpenStack)
-- Préparer l’environnement : Terraform ≥1.6, AWS CLI v2, Azure CLI, kubectl, Python 3.11 (`.tool-versions`). Installer les dépendances Python :  
-  `pip install -r scripts/python/requirements.txt`
-- Authentification cloud : `aws configure` ou variables `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`, et `az login` (+ `az account set` si besoin).
-- Générer les plans & coûts :
-  ```bash
-  make aws-plan    # exporte proofs/aws_plan.json (+ HTML si INFRACOST_API_KEY défini)
-  make azure-plan  # exporte proofs/azure_plan.json (+ HTML si INFRACOST_API_KEY défini)
-  ```
-- Collecter les snapshots CLI/Kubernetes :
-  ```bash
-  make proofs
-  ```
-- Scripts Python utilitaires :
-  ```bash
-  python scripts/python/s3_purge_prefix.py --bucket <name> --prefix <path/> [--dry-run]
-  python scripts/python/acr_purge_untagged.py --registry <acr>.azurecr.io --repository <repo> [--older-than-days 7]
-  python scripts/python/k8s_restart_deploy.py --namespace <ns> --name <deployment>
-  ```
-- PoC DevStack : suivre `openstack/devstack/README.md` pour générer `proofs/openstack_*.txt`.
-
-## ⚡ Ready to demo
-- Pré-requis : AWS CLI v2, Azure CLI, kubectl, Terraform ≥1.6, Python 3.11, (optionnel) Infracost avec `INFRACOST_API_KEY`.
-- Exécuter la préparation en 3 commandes :
-  ```powershell
-  pip install -r scripts/python/requirements.txt
-  .\proof-run.ps1
-  # (optionnel) make aws-plan && make azure-plan && make proofs
-  ```
-
-
-> **Ready to demo (Windows, sans make)**
-> ```powershell
-> az login
-> aws configure set region eu-west-3
-> $env:INFRACOST_API_KEY="TA_CLEF"
-> .\proof-run-nomake.ps1
-> ```
-
-## 🔖 Traçabilité Git
-- Commit conventionnel : `feat(repo): demo DevOps observability E2E + preuves (Grafana/Prom/AM)`
-- Tags : `demo-v1` + timestamp `audit-YYYYMMDD-HHmm` pour snapshoter l’audit
-- Remote cible : `https://github.com/flobehejohn/doctrine-demo`
-
+## Docker
+```bash
+docker build -f app/Dockerfile -t doctrine-demo:local app
+docker run --rm -p 8080:8080 doctrine-demo:local
+```
+## Quality Gate
+```powershell
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\validate-full.ps1
+```
+Le gate vérifie `git diff --check`, les documents critiques, `npm ci`, les tests contractuels, le build Docker et le smoke container.
+## Kubernetes
+```bash
+kubectl apply -f k8s/
+kubectl apply -f monitoring/podmonitor-app.yaml
+kubectl apply -f monitoring/prometheusrule.yaml
+kubectl rollout status deploy/doctrine-demo --timeout=180s
+```
+## Observability
+```promql
+sum(rate(http_requests_total[1m])) by (route)
+histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{route="/search"}[5m])) by (le))
+sum(rate(http_requests_total{code=~"5.."}[5m])) by (route)
+```
+## Documentation
+| Document | Rôle |
+| --- | --- |
+| [`ROUTES.md`](./ROUTES.md) | Contrat HTTP |
+| [`METRICS.md`](./METRICS.md) | Guide métriques Prometheus |
+| [`SLO.md`](./SLO.md) | Objectifs de niveau de service |
+| [`RUNBOOK.md`](./RUNBOOK.md) | Réponse incident |
+| [`CHECKLIST.md`](./CHECKLIST.md) | Checklist release |
+| [`docs/case-studies/observability-ci.md`](./docs/case-studies/observability-ci.md) | Case study recruteur/client |
+| [`docs/proofs/README.md`](./docs/proofs/README.md) | Index des preuves |
+| [`docs/adr/ADR-0001-staff-ci-observability-proof-pack.md`](./docs/adr/ADR-0001-staff-ci-observability-proof-pack.md) | Décision architecture CI/preuves |
+## Positionnement
+Ce repo est conçu comme une pièce de portfolio technique : il montre la capacité à construire, instrumenter, tester, auditer et documenter un service observable de bout en bout.
