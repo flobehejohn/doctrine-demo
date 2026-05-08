@@ -96,9 +96,11 @@ This repository now includes a Staff-level proof gate for CI and observability:
 Pour une lecture rapide du case study :
 
 1. [Recruiter one-pager](./docs/presentation/recruiter-one-pager.md)
-2. [Staff / Lead review guide](./docs/presentation/staff-review-guide.md)
-3. [Evidence gallery](./docs/presentation/evidence-gallery.md)
-4. [Observability evidence index](./docs/proofs/observability-evidence.md)
-5. [npm audit policy](./docs/security/npm-audit-policy.md)
+2. [Release scorecard](./docs/presentation/release-scorecard.md)
+3. [Staff / Lead review guide](./docs/presentation/staff-review-guide.md)
+4. [Evidence gallery](./docs/presentation/evidence-gallery.md)
+5. [Observability evidence index](./docs/proofs/observability-evidence.md)
+6. [npm audit policy](./docs/security/npm-audit-policy.md)
+7. [GitHub Actions Node 24 readiness](./docs/operations/github-actions-node24-readiness.md)
 
 Le repo distingue volontairement la preuve locale sans Docker (`validate-full.ps1 -SkipDocker`) et la preuve container distante via GitHub Actions.

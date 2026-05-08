@@ -143,11 +143,14 @@ try {
       "docs/proofs/observability-evidence.json",
       "docs/adr/ADR-0001-staff-ci-observability-proof-pack.md",
       "docs/operations/docker-deferred-validation.md",
+      "docs/operations/github-actions-node24-readiness.md",
       "docs/presentation/recruiter-one-pager.md",
       "docs/presentation/staff-review-guide.md",
       "docs/presentation/evidence-gallery.md",
       "docs/presentation/evidence-gallery.html",
-      "docs/security/npm-audit-policy.md"
+      "docs/presentation/release-scorecard.md",
+      "docs/security/npm-audit-policy.md",
+      "scripts/security/Test-NpmAuditThreshold.ps1"
     )
 
     foreach ($File in $RequiredFiles) {
@@ -174,6 +177,10 @@ try {
 
   Invoke-GateStep -Name "npm-ci" -Command {
     npm ci --prefix app
+  }
+
+  Invoke-GateStep -Name "npm-audit-critical-threshold" -Command {
+    & (Join-Path $RepoRoot "scripts/security/Test-NpmAuditThreshold.ps1") -OutDir (Join-Path $RunDir "npm-audit-critical-threshold")
   }
 
   Invoke-GateStep -Name "node-contract-tests" -Command {
