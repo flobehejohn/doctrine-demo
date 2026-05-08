@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node index.js",
     "start": "node index.js",
-    "test": "echo \"(no tests yet)\""
+    "test": "node --test test",
+    "test:contracts": "node --test test"
   },
   "dependencies": {
     "cors": "^2.8.5",

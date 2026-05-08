@@ -79,3 +79,14 @@ Un exemple de rapport généré est visible dans le repo (section Graphiques + T
 - Commit conventionnel : `feat(repo): demo DevOps observability E2E + preuves (Grafana/Prom/AM)`
 - Tags : `demo-v1` + timestamp `audit-YYYYMMDD-HHmm` pour snapshoter l’audit
 - Remote cible : `https://github.com/flobehejohn/doctrine-demo`
+
+## Staff-level CI & Observability Proof
+
+This repository now includes a Staff-level proof gate for CI and observability:
+
+- strict local core gate: scripts/validate-full.ps1 -SkipDocker;
+- HTTP contract tests for /healthz, /search, and /metrics;
+- GitHub Actions split between core and container;
+- observability proof inventory under docs/proofs/observability-evidence.md;
+- Docker-deferred validation strategy under docs/operations/docker-deferred-validation.md;
+- ADR and case study documentation under docs/adr/ and docs/case-studies/.
