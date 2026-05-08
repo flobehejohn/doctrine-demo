@@ -2,33 +2,35 @@
 
 ## État actuel
 
-Le gate `npm ci` passe, mais npm signale encore des vulnérabilités.
+Le gate `npm ci` passe, mais npm signale encore des vulnérabilités non nulles.
 
-Ce repo est un démonstrateur DevOps/SRE. Le seuil de blocage actuel porte sur :
+Ce repo est un démonstrateur DevOps/SRE. La politique évite `npm audit fix` à l’aveugle pour ne pas casser silencieusement la démo.
 
-- reproductibilité d’installation ;
-- tests contractuels ;
-- observabilité ;
-- build/smoke container en CI ;
-- documentation et artefacts.
+## Seuil CI actuel
 
-## Politique recommandée
-
-À court terme :
+Le gate bloque maintenant sur les vulnérabilités critiques :
 
 ```powershell
-npm audit --prefix app
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\security\Test-NpmAuditThreshold.ps1
 ```
 
-À intégrer ensuite :
+La commande exécutée est :
 
-- blocage immédiat sur vulnérabilité critique ;
-- revue manuelle sur vulnérabilité high ;
-- issue de remédiation si une dépendance directe est concernée ;
-- ADR si une vulnérabilité transitive ne peut pas être corrigée sans casser la démo.
+```bash
+npm audit --prefix app --audit-level=critical
+```
+
+## Politique de traitement
+
+| Niveau | Politique |
+| --- | --- |
+| Critical | Bloquant CI |
+| High | Revue manuelle + issue/ADR si non corrigeable immédiatement |
+| Moderate | Suivi périodique |
+| Low | Acceptable temporairement si transitive et documentée |
 
 ## Position honnête
 
 L’absence totale de vulnérabilités npm n’est pas encore garantie.
 
-Le risque est identifié, documenté, et isolé du périmètre principal de cette passe : CI, observabilité, preuve container et documentation.
+Le risque est identifié, documenté, et encadré par un seuil de blocage progressif. La prochaine étape consiste à traiter ou justifier les vulnérabilités high restantes.
