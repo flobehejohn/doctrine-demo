@@ -142,7 +142,12 @@ try {
       "docs/proofs/observability-evidence.md",
       "docs/proofs/observability-evidence.json",
       "docs/adr/ADR-0001-staff-ci-observability-proof-pack.md",
-      "docs/operations/docker-deferred-validation.md"
+      "docs/operations/docker-deferred-validation.md",
+      "docs/presentation/recruiter-one-pager.md",
+      "docs/presentation/staff-review-guide.md",
+      "docs/presentation/evidence-gallery.md",
+      "docs/presentation/evidence-gallery.html",
+      "docs/security/npm-audit-policy.md"
     )
 
     foreach ($File in $RequiredFiles) {
@@ -161,6 +166,10 @@ try {
     }
 
     Write-Host "[OK] documentation and CI contracts are strict"
+  }
+
+  Invoke-GateStep -Name "presentation-proof-tests" -Command {
+    & (Join-Path $RepoRoot "scripts/presentation/Test-PresentationProofs.ps1")
   }
 
   Invoke-GateStep -Name "npm-ci" -Command {
