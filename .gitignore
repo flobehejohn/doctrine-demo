@@ -24,3 +24,17 @@ monitoring/grafana/dashboards/*.jpg
 # Legacy audit outputs (keep curated proofs only)
 audit/demo/
 audit/app/repo_audit_*.txt
+
+# Keep curated cloud proofs under version control
+!audit/demo_audit/proofs/
+!audit/demo_audit/proofs/**
+
+# Local Terraform / cost-estimation artifacts
+**/.infracost/
+**/tfplan
+**/tfplan.*
+# Local audit runtime artifacts
+audit/_latest/
+# Local backup patches
+.local-backup/
+# Node local dependencies

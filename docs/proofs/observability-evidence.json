@@ -1,0 +1,381 @@
+{
+  "generatedAt": "2026-05-08T16:06:25.6346706+02:00",
+  "proofRoot": "audit/demo_audit",
+  "found": true,
+  "count": 31,
+  "totalSizeMB": 2.53,
+  "byKind": [
+    {
+      "kind": "cpu",
+      "count": 1,
+      "sizeMB": 0.0
+    },
+    {
+      "kind": "demo-animation",
+      "count": 1,
+      "sizeMB": 0.1
+    },
+    {
+      "kind": "errors",
+      "count": 1,
+      "sizeMB": 0.0
+    },
+    {
+      "kind": "grafana-panel",
+      "count": 6,
+      "sizeMB": 0.31
+    },
+    {
+      "kind": "latency",
+      "count": 1,
+      "sizeMB": 0.0
+    },
+    {
+      "kind": "memory",
+      "count": 1,
+      "sizeMB": 0.0
+    },
+    {
+      "kind": "prometheus-alerts",
+      "count": 1,
+      "sizeMB": 0.04
+    },
+    {
+      "kind": "prometheus-targets",
+      "count": 1,
+      "sizeMB": 1.48
+    },
+    {
+      "kind": "report-html",
+      "count": 1,
+      "sizeMB": 0.01
+    },
+    {
+      "kind": "report-pdf",
+      "count": 1,
+      "sizeMB": 0.49
+    },
+    {
+      "kind": "supporting-artifact",
+      "count": 15,
+      "sizeMB": 0.08
+    },
+    {
+      "kind": "traffic",
+      "count": 1,
+      "sizeMB": 0.0
+    }
+  ],
+  "files": [
+    {
+      "path": ".\\audit\\demo_audit\\5xx.csv",
+      "name": "5xx.csv",
+      "kind": "errors",
+      "extension": ".csv",
+      "sizeBytes": 426,
+      "sizeKB": 0.42,
+      "lastWriteTime": "2025-10-20T16:21:27.8678263+02:00",
+      "sha256": "11D3EF6CB95658A56C3E8AA777F89ED6053EDA035E546423259D56D450011195"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\alerts.json",
+      "name": "alerts.json",
+      "kind": "prometheus-alerts",
+      "extension": ".json",
+      "sizeBytes": 38714,
+      "sizeKB": 37.81,
+      "lastWriteTime": "2025-10-20T16:21:27.8698261+02:00",
+      "sha256": "1A4BE29EF0CC52C024BE0EC7D8845DD108D060657F92FC07640FDDEAC489B653"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\cpu.csv",
+      "name": "cpu.csv",
+      "kind": "cpu",
+      "extension": ".csv",
+      "sizeBytes": 479,
+      "sizeKB": 0.47,
+      "lastWriteTime": "2025-10-20T16:21:27.8748250+02:00",
+      "sha256": "5B3D7D77141FD0EC4930A9EE8E9813A27470DDCE6980440677D47AA10B49A00E"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\demo.gif",
+      "name": "demo.gif",
+      "kind": "demo-animation",
+      "extension": ".gif",
+      "sizeBytes": 106203,
+      "sizeKB": 103.71,
+      "lastWriteTime": "2025-10-20T16:21:37.4974649+02:00",
+      "sha256": "8CECA74DD62B9E3148BAD24306404D2DB69D6865B81095B77DE1DB7621A5C81D"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\diagnostics.txt",
+      "name": "diagnostics.txt",
+      "kind": "supporting-artifact",
+      "extension": ".txt",
+      "sizeBytes": 2764,
+      "sizeKB": 2.7,
+      "lastWriteTime": "2025-10-20T16:21:37.4994667+02:00",
+      "sha256": "883E11964F1B5FF54D3F6ABEDA6A4D451ED75EF125D21154D79AA2ED8B9B3AD8"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\images\\panel_01.png",
+      "name": "panel_01.png",
+      "kind": "grafana-panel",
+      "extension": ".png",
+      "sizeBytes": 40013,
+      "sizeKB": 39.08,
+      "lastWriteTime": "2025-10-20T16:21:37.5024650+02:00",
+      "sha256": "A2D0A2A6D7299ED1A90FE413302EF23078DFFB33F61B41B5DA2E00B4AE3E23B6"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\images\\panel_02.png",
+      "name": "panel_02.png",
+      "kind": "grafana-panel",
+      "extension": ".png",
+      "sizeBytes": 47738,
+      "sizeKB": 46.62,
+      "lastWriteTime": "2025-10-20T16:21:37.5084749+02:00",
+      "sha256": "1AE022AA6BD92CCFD035B6AED670D7EA10E3D115622462C502D550F7EC474BEF"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\images\\panel_03.png",
+      "name": "panel_03.png",
+      "kind": "grafana-panel",
+      "extension": ".png",
+      "sizeBytes": 24519,
+      "sizeKB": 23.94,
+      "lastWriteTime": "2025-10-20T16:21:37.5114648+02:00",
+      "sha256": "CB6A035E73678BC0B2FBB57F01CE6574E2956BC25371351E41E6D29C962C34AB"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\images\\panel_04.png",
+      "name": "panel_04.png",
+      "kind": "grafana-panel",
+      "extension": ".png",
+      "sizeBytes": 55894,
+      "sizeKB": 54.58,
+      "lastWriteTime": "2025-10-20T16:21:37.5144771+02:00",
+      "sha256": "9429F59068E29A7438CFE10067AB148D6FB2159DE88C79B9074686B8A700DE0A"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\images\\panel_05.png",
+      "name": "panel_05.png",
+      "kind": "grafana-panel",
+      "extension": ".png",
+      "sizeBytes": 114848,
+      "sizeKB": 112.16,
+      "lastWriteTime": "2025-10-20T16:21:37.5197065+02:00",
+      "sha256": "59848703B2A9DB71CC261B993B799C8607D4F78C7D38CE7A71EDF3356AEA7C76"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\images\\panel_06.png",
+      "name": "panel_06.png",
+      "kind": "grafana-panel",
+      "extension": ".png",
+      "sizeBytes": 43867,
+      "sizeKB": 42.84,
+      "lastWriteTime": "2025-10-20T16:21:37.5267612+02:00",
+      "sha256": "64352ED189C658C1375840C74B034C240E5F897F49C632034EC0804E466ACA1C"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\mem.csv",
+      "name": "mem.csv",
+      "kind": "memory",
+      "extension": ".csv",
+      "sizeBytes": 580,
+      "sizeKB": 0.57,
+      "lastWriteTime": "2025-10-20T16:21:37.5277657+02:00",
+      "sha256": "B99C08320F77A2DAD91F95BA722F5C7F6DB96FEA0D7FDA19AAA0A48E8C6D82DE"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\p95.csv",
+      "name": "p95.csv",
+      "kind": "latency",
+      "extension": ".csv",
+      "sizeBytes": 43,
+      "sizeKB": 0.04,
+      "lastWriteTime": "2025-10-20T16:21:37.5298775+02:00",
+      "sha256": "D70DA4F1A9E9E8F1F6779FDE8DC4321726394C9C60CAD6C6295782BF3F20FAD7"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\aws_cost.html",
+      "name": "aws_cost.html",
+      "kind": "supporting-artifact",
+      "extension": ".html",
+      "sizeBytes": 17433,
+      "sizeKB": 17.02,
+      "lastWriteTime": "2026-05-08T16:06:00.8258094+02:00",
+      "sha256": "F1F795C3C14D82C1347E11757F8D825A70F7C1A551B6556A708A2C860162D3C8"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\aws_cost.txt",
+      "name": "aws_cost.txt",
+      "kind": "supporting-artifact",
+      "extension": ".txt",
+      "sizeBytes": 53,
+      "sizeKB": 0.05,
+      "lastWriteTime": "2025-10-22T21:42:08.9858768+02:00",
+      "sha256": "5183ABEB415C1CC1E96E746C4E54DB8A765A651872E84AE822E121873BF54EB9"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\aws_plan.json",
+      "name": "aws_plan.json",
+      "kind": "supporting-artifact",
+      "extension": ".json",
+      "sizeBytes": 9532,
+      "sizeKB": 9.31,
+      "lastWriteTime": "2026-05-08T16:06:00.8288103+02:00",
+      "sha256": "CE33FB9DE588E4F4C68D467DFBCB0FE467E8BC5C0F6CD4DDF6C73DF964D0D945"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\azure_cost.html",
+      "name": "azure_cost.html",
+      "kind": "supporting-artifact",
+      "extension": ".html",
+      "sizeBytes": 16999,
+      "sizeKB": 16.6,
+      "lastWriteTime": "2026-05-08T16:06:00.8308522+02:00",
+      "sha256": "00761F52277BC0C01C12F1019AE33BEC59FCF088ECFF9E26E8B30D5C7A80A8EA"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\azure_cost.txt",
+      "name": "azure_cost.txt",
+      "kind": "supporting-artifact",
+      "extension": ".txt",
+      "sizeBytes": 50,
+      "sizeKB": 0.05,
+      "lastWriteTime": "2025-10-23T09:09:23.5758072+02:00",
+      "sha256": "7D693002ABFAB0A1ED4077C13CA4D2F53EE782FBB8436EBF9003C9D82BE35715"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\azure_plan.json",
+      "name": "azure_plan.json",
+      "kind": "supporting-artifact",
+      "extension": ".json",
+      "sizeBytes": 15141,
+      "sizeKB": 14.79,
+      "lastWriteTime": "2026-05-08T16:06:00.8328529+02:00",
+      "sha256": "151EE45FF12C9D94D5B604936AFC603A9D99F2FBCAC17FADCF8642C69B536522"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\cloud_cli_snapshots\\acr_show.json",
+      "name": "acr_show.json",
+      "kind": "supporting-artifact",
+      "extension": ".json",
+      "sizeBytes": 8249,
+      "sizeKB": 8.06,
+      "lastWriteTime": "2026-05-08T16:06:00.8348530+02:00",
+      "sha256": "79C8AD79F11F8E728597D4A26B2C642A9E0ACEE01D582157E757954ABD4B1FF0"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\cloud_cli_snapshots\\aks_show.json",
+      "name": "aks_show.json",
+      "kind": "supporting-artifact",
+      "extension": ".json",
+      "sizeBytes": 8249,
+      "sizeKB": 8.06,
+      "lastWriteTime": "2026-05-08T16:06:00.8438523+02:00",
+      "sha256": "79C8AD79F11F8E728597D4A26B2C642A9E0ACEE01D582157E757954ABD4B1FF0"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\cloud_cli_snapshots\\aws_ecr.json",
+      "name": "aws_ecr.json",
+      "kind": "supporting-artifact",
+      "extension": ".json",
+      "sizeBytes": 4,
+      "sizeKB": 0.0,
+      "lastWriteTime": "2025-10-23T09:33:11.6788280+02:00",
+      "sha256": "A5338D955B09046EC0B16F3A9625B7955C763AAE07DC722E474E6078745F932F"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\cloud_cli_snapshots\\aws_s3.json",
+      "name": "aws_s3.json",
+      "kind": "supporting-artifact",
+      "extension": ".json",
+      "sizeBytes": 16,
+      "sizeKB": 0.02,
+      "lastWriteTime": "2025-10-23T09:33:16.5500680+02:00",
+      "sha256": "F668033FF4A1B2859D4CC85017953661206FA5145CB89917ACAA487D70333FD5"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\cloud_cli_snapshots\\k8s_get_nodes.txt",
+      "name": "k8s_get_nodes.txt",
+      "kind": "supporting-artifact",
+      "extension": ".txt",
+      "sizeBytes": 246,
+      "sizeKB": 0.24,
+      "lastWriteTime": "2025-10-22T22:34:05.7683239+02:00",
+      "sha256": "E99E4E851CE9E8092FBE02A30868DB97DBA2D929F5604A9D16FFAA879C2B3EC1"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\cloud_cli_snapshots\\k8s_get_pods.txt",
+      "name": "k8s_get_pods.txt",
+      "kind": "supporting-artifact",
+      "extension": ".txt",
+      "sizeBytes": 9942,
+      "sizeKB": 9.71,
+      "lastWriteTime": "2025-10-22T22:34:06.3326185+02:00",
+      "sha256": "77A6458B5D72614B6110772D5B499859EE522DD675311A105C3B9A0D3BA4C784"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\openstack_endpoints.txt",
+      "name": "openstack_endpoints.txt",
+      "kind": "supporting-artifact",
+      "extension": ".txt",
+      "sizeBytes": 80,
+      "sizeKB": 0.08,
+      "lastWriteTime": "2025-10-22T05:08:17.2294234+02:00",
+      "sha256": "75616D4E55C3A43DCBF80CC788F5C75130CF992E4BCBBB304E6F07E5E1235D8D"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\proofs\\openstack_services.txt",
+      "name": "openstack_services.txt",
+      "kind": "supporting-artifact",
+      "extension": ".txt",
+      "sizeBytes": 78,
+      "sizeKB": 0.08,
+      "lastWriteTime": "2025-10-22T05:08:17.1934208+02:00",
+      "sha256": "46DA4683B9BE16CDFE97933E8A8A24DF6AD84D1832F834BF5ECC4D8E80902BFC"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\report.html",
+      "name": "report.html",
+      "kind": "report-html",
+      "extension": ".html",
+      "sizeBytes": 14195,
+      "sizeKB": 13.86,
+      "lastWriteTime": "2025-10-22T05:12:04.9323943+02:00",
+      "sha256": "E65CF001FC4F8207531395E45253956B3963D2DDEE765F29FFA27834825316A4"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\report.pdf",
+      "name": "report.pdf",
+      "kind": "report-pdf",
+      "extension": ".pdf",
+      "sizeBytes": 515229,
+      "sizeKB": 503.15,
+      "lastWriteTime": "2025-10-20T16:21:37.5443260+02:00",
+      "sha256": "9C7D8E3D4D8DC67A3AB759CDAFE4B0D157588BB0A00439FB6293C525FCD90708"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\rps.csv",
+      "name": "rps.csv",
+      "kind": "traffic",
+      "extension": ".csv",
+      "sizeBytes": 75,
+      "sizeKB": 0.07,
+      "lastWriteTime": "2025-10-20T16:21:37.5483137+02:00",
+      "sha256": "B5CA162335909CA1ABB6A37E93EF803963834BAAB44DCAA6E56596119A4274C2"
+    },
+    {
+      "path": ".\\audit\\demo_audit\\targets.json",
+      "name": "targets.json",
+      "kind": "prometheus-targets",
+      "extension": ".json",
+      "sizeBytes": 1557109,
+      "sizeKB": 1520.61,
+      "lastWriteTime": "2025-10-20T16:21:37.5633190+02:00",
+      "sha256": "58D522DF95175FD17092C7C6DC5E14A6868B6F673B234796AFFE0E75A6169927"
+    }
+  ]
+}
