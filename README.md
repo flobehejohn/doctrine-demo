@@ -90,3 +90,15 @@ This repository now includes a Staff-level proof gate for CI and observability:
 - observability proof inventory under docs/proofs/observability-evidence.md;
 - Docker-deferred validation strategy under docs/operations/docker-deferred-validation.md;
 - ADR and case study documentation under docs/adr/ and docs/case-studies/.
+
+## 3-minute review path
+
+Pour une lecture rapide du case study :
+
+1. [Recruiter one-pager](./docs/presentation/recruiter-one-pager.md)
+2. [Staff / Lead review guide](./docs/presentation/staff-review-guide.md)
+3. [Evidence gallery](./docs/presentation/evidence-gallery.md)
+4. [Observability evidence index](./docs/proofs/observability-evidence.md)
+5. [npm audit policy](./docs/security/npm-audit-policy.md)
+
+Le repo distingue volontairement la preuve locale sans Docker (`validate-full.ps1 -SkipDocker`) et la preuve container distante via GitHub Actions.

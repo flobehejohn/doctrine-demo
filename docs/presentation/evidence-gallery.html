@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Doctrine Demo — Observability Evidence Gallery</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #0b1020; color: #eef2ff; }
+    main { max-width: 1180px; margin: 0 auto; padding: 40px 28px; }
+    h1 { font-size: 36px; margin-bottom: 8px; }
+    p { color: #cbd5e1; line-height: 1.55; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin-top: 28px; }
+    .card { background: #111827; border: 1px solid #334155; border-radius: 16px; padding: 16px; box-shadow: 0 12px 40px rgba(0,0,0,.35); }
+    .card h2 { font-size: 18px; margin: 0 0 12px; }
+    img { width: 100%; border-radius: 10px; background: #020617; border: 1px solid #1e293b; }
+    .links { margin-top: 28px; padding: 18px; border-radius: 14px; background: #0f172a; border: 1px solid #334155; }
+    a { color: #93c5fd; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Doctrine Demo — Observability Evidence Gallery</h1>
+  <p>Galerie statique des preuves Grafana/Prometheus utilisées pour présenter le case study DevOps/SRE sans relancer Docker localement.</p>
+  <section class="grid">
+    <article class="card"><h2>RPS</h2><img src="../../audit/demo_audit/images/panel_01.png" alt="RPS panel"></article>
+    <article class="card"><h2>Latency / p95</h2><img src="../../audit/demo_audit/images/panel_02.png" alt="Latency p95 panel"></article>
+    <article class="card"><h2>5xx</h2><img src="../../audit/demo_audit/images/panel_03.png" alt="5xx panel"></article>
+    <article class="card"><h2>CPU</h2><img src="../../audit/demo_audit/images/panel_04.png" alt="CPU panel"></article>
+    <article class="card"><h2>Memory</h2><img src="../../audit/demo_audit/images/panel_05.png" alt="Memory panel"></article>
+    <article class="card"><h2>Restarts / health</h2><img src="../../audit/demo_audit/images/panel_06.png" alt="Restarts panel"></article>
+  </section>
+  <section class="links">
+    <strong>Reports</strong>
+    <p>
+      <a href="../../audit/demo_audit/report.html">HTML report</a> ·
+      <a href="../../audit/demo_audit/report.pdf">PDF report</a> ·
+      <a href="../../audit/demo_audit/alerts.json">Prometheus alerts</a> ·
+      <a href="../../audit/demo_audit/targets.json">Prometheus targets</a>
+    </p>
+  </section>
+</main>
+</body>
+</html>
