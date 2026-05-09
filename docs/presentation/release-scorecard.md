@@ -14,6 +14,10 @@ Cette scorecard donne une lecture immédiate de l’état de certification du re
 | npm audit | Known risk | `docs/security/npm-audit-policy.md` + seuil critical | Vulnérabilités non-critiques encore à traiter |
 | Docker local | Deferred | `docs/operations/docker-deferred-validation.md` | Contrainte disque locale assumée |
 | GitHub Actions Node 24 readiness | Tracked | `docs/operations/github-actions-node24-readiness.md` | À surveiller jusqu’à suppression complète des warnings GitHub |
+| PowerShell rationale | Tracked | `docs/operations/powershell-crossplatform-rationale.md` | Migration Make/Bash/Python possible selon contexte d’équipe |
+| GitOps readiness | Tracked | `docs/gitops/README.md` + `gitops/argocd/` | Exemple ArgoCD, non appliqué sur cluster live |
+| Terraform remote state | Tracked | `docs/terraform/remote-state-readiness.md` | Backend réel non activé sans compte cloud dédié |
+| Shift-left SAST | Tracked | `docs/security/shift-left-sast-readiness.md` | Trivy/Checkov à passer en gate réel dans une prochaine PR |
 
 ## Verdict
 

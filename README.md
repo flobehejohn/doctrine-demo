@@ -1,5 +1,7 @@
 # Doctrine Demo — DevOps Proof (Observability E2E)
 
+[![staff-ci](https://github.com/flobehejohn/doctrine-demo/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/flobehejohn/doctrine-demo/actions/workflows/ci.yml)
+
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-ready-326ce5?logo=kubernetes&logoColor=white)](#stack)
 [![Prometheus](https://img.shields.io/badge/Prometheus-Grafana%20stack-e6522c?logo=prometheus&logoColor=white)](#dashboards)
 [![PowerShell](https://img.shields.io/badge/Automation-PowerShell-5391fe?logo=powershell&logoColor=white)](#run-demo)
@@ -104,3 +106,15 @@ Pour une lecture rapide du case study :
 7. [GitHub Actions Node 24 readiness](./docs/operations/github-actions-node24-readiness.md)
 
 Le repo distingue volontairement la preuve locale sans Docker (`validate-full.ps1 -SkipDocker`) et la preuve container distante via GitHub Actions.
+
+## Hardening readiness path
+
+Cette section répond explicitement aux objections classiques d’un entretien DevOps/SRE senior :
+
+1. [PowerShell cross-platform rationale](./docs/operations/powershell-crossplatform-rationale.md)
+2. [GitOps readiness](./docs/gitops/README.md)
+3. [Terraform remote state readiness](./docs/terraform/remote-state-readiness.md)
+4. [Shift-left SAST readiness](./docs/security/shift-left-sast-readiness.md)
+5. [ArgoCD example application](./gitops/argocd/doctrine-demo-application.example.yaml)
+
+Le repo ne prétend pas être une plateforme Kubernetes complète de production. Il montre un socle démontrable, auditable et extensible vers GitOps, remote state Terraform et DevSecOps.
