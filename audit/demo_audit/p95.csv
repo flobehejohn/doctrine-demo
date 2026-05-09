@@ -1,2 +1,2 @@
-"series","last","max","avg"
-"unknown",,,
+"series","last","max","avg","slo","unit"
+"global",0.0475,0.0475,0.0475,0.3000,"seconds"

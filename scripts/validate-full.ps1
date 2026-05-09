@@ -157,7 +157,8 @@ try {
       "docs/presentation/release-scorecard.md",
       "docs/security/npm-audit-policy.md",
       "scripts/security/Test-NpmAuditThreshold.ps1",
-      "scripts/presentation/Test-HardeningReadiness.ps1"
+      "scripts/presentation/Test-HardeningReadiness.ps1",
+      "scripts/presentation/Test-P95Evidence.ps1"
     )
 
     foreach ($File in $RequiredFiles) {
@@ -182,6 +183,9 @@ try {
     & (Join-Path $RepoRoot "scripts/presentation/Test-HardeningReadiness.ps1")
   }
 
+  Invoke-GateStep -Name "p95-evidence-tests" -Command {
+    & (Join-Path $RepoRoot "scripts/presentation/Test-P95Evidence.ps1")
+  }
   Invoke-GateStep -Name "presentation-proof-tests" -Command {
     & (Join-Path $RepoRoot "scripts/presentation/Test-PresentationProofs.ps1")
   }
