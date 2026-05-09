@@ -144,13 +144,20 @@ try {
       "docs/adr/ADR-0001-staff-ci-observability-proof-pack.md",
       "docs/operations/docker-deferred-validation.md",
       "docs/operations/github-actions-node24-readiness.md",
+      "docs/operations/powershell-crossplatform-rationale.md",
+      "docs/gitops/README.md",
+      "gitops/argocd/doctrine-demo-application.example.yaml",
+      "docs/terraform/remote-state-readiness.md",
+      "docs/terraform/examples/aws-backend.example.tf",
+      "docs/security/shift-left-sast-readiness.md",
       "docs/presentation/recruiter-one-pager.md",
       "docs/presentation/staff-review-guide.md",
       "docs/presentation/evidence-gallery.md",
       "docs/presentation/evidence-gallery.html",
       "docs/presentation/release-scorecard.md",
       "docs/security/npm-audit-policy.md",
-      "scripts/security/Test-NpmAuditThreshold.ps1"
+      "scripts/security/Test-NpmAuditThreshold.ps1",
+      "scripts/presentation/Test-HardeningReadiness.ps1"
     )
 
     foreach ($File in $RequiredFiles) {
@@ -169,6 +176,10 @@ try {
     }
 
     Write-Host "[OK] documentation and CI contracts are strict"
+  }
+
+  Invoke-GateStep -Name "hardening-readiness-tests" -Command {
+    & (Join-Path $RepoRoot "scripts/presentation/Test-HardeningReadiness.ps1")
   }
 
   Invoke-GateStep -Name "presentation-proof-tests" -Command {
