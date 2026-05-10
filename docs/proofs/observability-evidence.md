@@ -1,6 +1,6 @@
 # Observability Evidence Index
 
-Generated: 2026-05-08T22:19:37.498Z
+Generated: 2026-05-10T22:07:13.2993510Z
 
 Proof root: `audit/demo_audit`
 
@@ -8,7 +8,7 @@ Found: true
 
 Artifacts: 16
 
-Total size: 2.34 MB
+Total size: 2.33 MB
 
 ## Summary by kind
 
@@ -16,7 +16,7 @@ Total size: 2.34 MB
 | --- | ---: | ---: |
 | cpu | 1 | 0 |
 | errors | 1 | 0 |
-| grafana-panel | 6 | 0.31 |
+| grafana-panel | 6 | 0.3 |
 | latency | 1 | 0 |
 | memory | 1 | 0 |
 | prometheus-alerts | 1 | 0.04 |
@@ -35,13 +35,13 @@ Total size: 2.34 MB
 | cpu | `./audit/demo_audit/cpu.csv` | 0.47 | `5B3D7D77141F` |
 | supporting-artifact | `./audit/demo_audit/diagnostics.txt` | 2.7 | `883E11964F1B` |
 | grafana-panel | `./audit/demo_audit/images/panel_01.png` | 39.08 | `A2D0A2A6D729` |
-| grafana-panel | `./audit/demo_audit/images/panel_02.png` | 46.62 | `1AE022AA6BD9` |
+| grafana-panel | `./audit/demo_audit/images/panel_02.png` | 34.79 | `EB79FE075F58` |
 | grafana-panel | `./audit/demo_audit/images/panel_03.png` | 23.94 | `CB6A035E7367` |
 | grafana-panel | `./audit/demo_audit/images/panel_04.png` | 54.58 | `9429F59068E2` |
 | grafana-panel | `./audit/demo_audit/images/panel_05.png` | 112.16 | `59848703B2A9` |
 | grafana-panel | `./audit/demo_audit/images/panel_06.png` | 42.84 | `64352ED189C6` |
 | memory | `./audit/demo_audit/mem.csv` | 0.57 | `B99C08320F77` |
-| latency | `./audit/demo_audit/p95.csv` | 0.04 | `D70DA4F1A9E9` |
+| latency | `./audit/demo_audit/p95.csv` | 0.09 | `1278EE610B57` |
 | report-html | `./audit/demo_audit/report.html` | 9.9 | `0B282340B774` |
 | report-pdf | `./audit/demo_audit/report.pdf` | 503.15 | `9C7D8E3D4D8D` |
 | traffic | `./audit/demo_audit/rps.csv` | 0.07 | `B5CA16233590` |
