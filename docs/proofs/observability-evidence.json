@@ -1,34 +1,34 @@
 {
-  "generatedAt": "2026-05-08T22:19:37.498Z",
+  "generatedAt": "2026-05-10T22:07:13.2993510Z",
   "proofRoot": "audit/demo_audit",
   "found": true,
   "count": 16,
-  "totalSizeMB": 2.34,
+  "totalSizeMB": 2.33,
   "byKind": [
     {
       "kind": "cpu",
       "count": 1,
-      "sizeMB": 0
+      "sizeMB": 0.0
     },
     {
       "kind": "errors",
       "count": 1,
-      "sizeMB": 0
+      "sizeMB": 0.0
     },
     {
       "kind": "grafana-panel",
       "count": 6,
-      "sizeMB": 0.31
+      "sizeMB": 0.3
     },
     {
       "kind": "latency",
       "count": 1,
-      "sizeMB": 0
+      "sizeMB": 0.0
     },
     {
       "kind": "memory",
       "count": 1,
-      "sizeMB": 0
+      "sizeMB": 0.0
     },
     {
       "kind": "prometheus-alerts",
@@ -53,12 +53,12 @@
     {
       "kind": "supporting-artifact",
       "count": 1,
-      "sizeMB": 0
+      "sizeMB": 0.0
     },
     {
       "kind": "traffic",
       "count": 1,
-      "sizeMB": 0
+      "sizeMB": 0.0
     }
   ],
   "files": [
@@ -112,9 +112,9 @@
       "name": "panel_02.png",
       "kind": "grafana-panel",
       "extension": ".png",
-      "sizeBytes": 47738,
-      "sizeKB": 46.62,
-      "sha256": "1AE022AA6BD92CCFD035B6AED670D7EA10E3D115622462C502D550F7EC474BEF"
+      "sizeBytes": 35621,
+      "sizeKB": 34.79,
+      "sha256": "EB79FE075F58FE70325F990AF0E7C633721751483253FC2B56456627AC42CB83"
     },
     {
       "path": "./audit/demo_audit/images/panel_03.png",
@@ -166,9 +166,9 @@
       "name": "p95.csv",
       "kind": "latency",
       "extension": ".csv",
-      "sizeBytes": 43,
-      "sizeKB": 0.04,
-      "sha256": "D70DA4F1A9E9E8F1F6779FDE8DC4321726394C9C60CAD6C6295782BF3F20FAD7"
+      "sizeBytes": 90,
+      "sizeKB": 0.09,
+      "sha256": "1278EE610B57D47FE3A768310A4EBCD95D5B378D2F9A3D75CF62F894C5A5D651"
     },
     {
       "path": "./audit/demo_audit/report.html",
