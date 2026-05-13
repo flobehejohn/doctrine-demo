@@ -1,0 +1,7 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doctrine-z-api
+  namespace: doctrine-z-lab
+spec:
+  replicas: 1
