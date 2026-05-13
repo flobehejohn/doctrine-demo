@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: doctrine-z-lab
+  labels:
+    app.kubernetes.io/name: doctrine-z-ai-delivery-k8s-lab
+    app.kubernetes.io/part-of: doctrine-z
