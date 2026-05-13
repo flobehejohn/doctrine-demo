@@ -1,0 +1,22 @@
+# Pedagogical prod-like overlay only.
+# This is not a production platform definition and must be reviewed before any real deployment.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doctrine-z-api
+  namespace: doctrine-z-lab
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: doctrine-z-api
+          image: ghcr.io/flobehejohn/doctrine-z-ai-delivery-k8s-lab:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
