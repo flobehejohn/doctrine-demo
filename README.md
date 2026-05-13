@@ -107,6 +107,21 @@ Pour une lecture rapide du case study :
 
 Le repo distingue volontairement la preuve locale sans Docker (`validate-full.ps1 -SkipDocker`) et la preuve container distante via GitHub Actions.
 
+## Doctrine.Z Kubernetes Lab — AI Delivery Platform Extension
+
+Doctrine.Z Kubernetes Lab est une extension pédagogique du blueprint Doctrine.Z. Elle illustre comment relier AI Delivery, CI/CD, observabilité et SRE à un socle Kubernetes minimal testable sans risque.
+
+- [Lab README](./labs/doctrine-z-ai-delivery-k8s-lab/README.md)
+- [Architecture](./labs/doctrine-z-ai-delivery-k8s-lab/docs/architecture.md)
+- [SLO / SLI](./labs/doctrine-z-ai-delivery-k8s-lab/docs/slo-sli.md)
+- [SRE runbook](./labs/doctrine-z-ai-delivery-k8s-lab/docs/sre-runbook.md)
+- [Playground guide](./labs/doctrine-z-ai-delivery-k8s-lab/docs/playground-guide.md)
+- [Framer section copy](./labs/doctrine-z-ai-delivery-k8s-lab/docs/framer-section-copy.md)
+
+Positionnement : lab pédagogique et vérifiable pour entretien Platform Engineering / AI Delivery. Il utilise un provider `mock-llm`, ne contient aucun secret réel et ne prétend pas être une plateforme Kubernetes production.
+
+Validation dédiée : `.github/workflows/validate-k8s-lab.yml` teste les endpoints mock, construit l’image Docker sans push et rend les overlays Kustomize dev/prod.
+
 ## Hardening readiness path
 
 Cette section répond explicitement aux objections classiques d’un entretien DevOps/SRE senior :
