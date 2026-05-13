@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - deployment.yaml
+  - service.yaml
+  - hpa.yaml
+  - networkpolicy.yaml
+  # Example only: apply manually after replacing the placeholder if a real provider is introduced.
+  # - secret.example.yaml
+commonLabels:
+  doctrine.z/lab: ai-delivery-k8s
