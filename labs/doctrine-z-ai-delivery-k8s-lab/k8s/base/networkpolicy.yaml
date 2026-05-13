@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: doctrine-z-api-allow-http
+  namespace: doctrine-z-lab
+  labels:
+    app: doctrine-z-api
+    app.kubernetes.io/name: doctrine-z-api
+    app.kubernetes.io/part-of: doctrine-z-ai-delivery-k8s-lab
+spec:
+  podSelector:
+    matchLabels:
+      app: doctrine-z-api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        # Pedagogical default for playground clusters: allow HTTP from pods in the same namespace.
+        # In a real platform this should be tightened according to ingress controller and namespace boundaries.
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: doctrine-z-lab
+      ports:
+        - protocol: TCP
+          port: 3000
