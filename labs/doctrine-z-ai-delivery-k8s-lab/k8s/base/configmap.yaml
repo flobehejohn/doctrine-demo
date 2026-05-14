@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: doctrine-z-api-config
+  namespace: doctrine-z-lab
+  labels:
+    app.kubernetes.io/name: doctrine-z-api
+    app.kubernetes.io/part-of: doctrine-z-ai-delivery-k8s-lab
+data:
+  APP_ENV: "dev"
+  LLM_PROVIDER: "mock-llm"
+  QUALITY_GATE_MODE: "strict"

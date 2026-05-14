@@ -1,0 +1,24 @@
+{
+  "name": "doctrine-z-ai-delivery-k8s-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mock AI Delivery API for the Doctrine.Z Kubernetes Lab.",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js",
+    "test": "node --test test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "doctrine-z",
+    "kubernetes",
+    "ai-delivery",
+    "platform-engineering",
+    "mock-llm"
+  ],
+  "license": "UNLICENSED"
+}
