@@ -16,45 +16,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
-    name: App, Docker and Kustomize gates
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  app:
+    name: Doctrine Platform Lab App CI
+    uses: flobehejohn/doctrine-platform/.github/workflows/reusable-frontend-ci.yml@main
+    with:
+      project_name: doctrine-z-ai-delivery-k8s-lab
+      node_version: "20"
+      working_directory: labs/doctrine-z-ai-delivery-k8s-lab/app
+      audit_dir: audit/k8s-lab
+    secrets: inherit
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+  container:
+    name: Doctrine Platform Lab Container Smoke
+    uses: flobehejohn/doctrine-platform/.github/workflows/reusable-container-smoke.yml@main
+    needs: app
+    with:
+      project_name: doctrine-z-ai-delivery-k8s-lab
+      image_name: doctrine-z-ai-delivery-k8s-lab
+      dockerfile_path: labs/doctrine-z-ai-delivery-k8s-lab/app/Dockerfile
+      build_context: labs/doctrine-z-ai-delivery-k8s-lab/app
+      container_port: "3000"
+      healthcheck_path: /healthz
+      audit_dir: audit/k8s-lab
+    secrets: inherit
 
-      - name: App syntax check
-        working-directory: labs/doctrine-z-ai-delivery-k8s-lab/app
-        run: node --check server.js
-
-      - name: Install app dependencies
-        working-directory: labs/doctrine-z-ai-delivery-k8s-lab/app
-        run: npm install
-
-      - name: Contract tests
-        working-directory: labs/doctrine-z-ai-delivery-k8s-lab/app
-        run: npm test
-
-      - name: Docker build without push
-        run: docker build -t doctrine-z-ai-delivery-k8s-lab:ci labs/doctrine-z-ai-delivery-k8s-lab/app
-
-      - name: Validate Kustomize overlays
-        run: |
-          kubectl kustomize labs/doctrine-z-ai-delivery-k8s-lab/k8s/overlays/dev > /tmp/doctrine-z-k8s-lab-dev.yaml
-          kubectl kustomize labs/doctrine-z-ai-delivery-k8s-lab/k8s/overlays/prod > /tmp/doctrine-z-k8s-lab-prod.yaml
-          test -s /tmp/doctrine-z-k8s-lab-dev.yaml
-          test -s /tmp/doctrine-z-k8s-lab-prod.yaml
-
-      - name: Anti-secret and positioning guard
-        run: |
-          ! grep -RInE '(sk-[A-Za-z0-9]|OPENAI_API_KEY|ANTHROPIC_API_KEY|MISTRAL_API_KEY|GEMINI_API_KEY)' labs/doctrine-z-ai-delivery-k8s-lab
-          grep -RIn 'mock-llm' labs/doctrine-z-ai-delivery-k8s-lab/app labs/doctrine-z-ai-delivery-k8s-lab/k8s labs/doctrine-z-ai-delivery-k8s-lab/docs >/dev/null
-          grep -RIn 'ne prétend pas être une plateforme Kubernetes production' labs/doctrine-z-ai-delivery-k8s-lab >/dev/null
+  kustomize:
+    name: Doctrine Platform Lab Kustomize Validation
+    uses: flobehejohn/doctrine-platform/.github/workflows/reusable-kustomize-validate.yml@main
+    needs: app
+    with:
+      project_name: doctrine-z-ai-delivery-k8s-lab
+      dev_overlay_path: labs/doctrine-z-ai-delivery-k8s-lab/k8s/overlays/dev
+      prod_overlay_path: labs/doctrine-z-ai-delivery-k8s-lab/k8s/overlays/prod
+      audit_dir: audit/k8s-lab
+    secrets: inherit
