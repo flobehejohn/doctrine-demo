@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+# TYPE: Local Smoke Test Script
+# CONCEPT: AI delivery contract smoke
+# INTENT: Validate the Doctrine.Z AI Delivery mock API locally before container or Kubernetes promotion.
+# IMPLEMENTATION: Bash strict mode, local Node process lifecycle, curl endpoint assertions.
+# LIFESPAN: Permanent lab-local developer safety gate
+# SRE-ID: SRE-K8S-LAB-LOCAL-SMOKE
+
 set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../app" && pwd)"
