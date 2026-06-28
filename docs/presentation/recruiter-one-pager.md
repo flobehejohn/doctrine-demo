@@ -12,15 +12,15 @@ Le repo prouve trois capacités :
 
 ## Ce que le lecteur peut vérifier vite
 
-| Preuve | Où regarder |
-| --- | --- |
-| CI verte | GitHub Actions `staff-ci` |
-| Tests HTTP | `app/test/http-contract.test.js` |
-| Gate local | `scripts/validate-full.ps1` |
-| Docker distant | job `Container Build & Smoke` |
-| Grafana panels | `audit/demo_audit/images/` |
-| Rapport partageable | `audit/demo_audit/report.pdf` |
-| Inventaire preuves | `docs/proofs/observability-evidence.md` |
+| Preuve                | Où regarder                                              |
+| --------------------- | -------------------------------------------------------- |
+| CI verte              | GitHub Actions `staff-ci`                                |
+| Tests HTTP            | `app/test/http-contract.test.js`                         |
+| Gate local            | `scripts/validate-full.ps1`                              |
+| Docker distant        | job `Container Build & Smoke`                            |
+| Grafana panels        | `audit/demo_audit/images/`                               |
+| Rapport partageable   | `audit/demo_audit/report.pdf`                            |
+| Inventaire preuves    | `docs/proofs/observability-evidence.md`                  |
 | Décision architecture | `docs/adr/ADR-0001-staff-ci-observability-proof-pack.md` |
 
 ## Message entretien
