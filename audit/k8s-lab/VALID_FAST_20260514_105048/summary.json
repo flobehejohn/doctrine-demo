@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-05-14T10:51:01.9210044+02:00",
+  "status": "OK_WITH_DOCKER_DEFERRED",
+  "repoPath": "C:\\ATLAS\\INBOX\\dev\\doctrine-demo",
+  "branch": "feature/doctrine-z-k8s-ai-delivery-lab",
+  "head": "c753354a89a00cea7decb9ecad907c22e1903f36",
+  "expectedHead": "c753354a89a00cea7decb9ecad907c22e1903f36",
+  "auditDir": "C:\\ATLAS\\INBOX\\dev\\doctrine-demo\\audit\\k8s-lab\\VALID_FAST_20260514_105048",
+  "validated": {
+    "gitSync": true,
+    "diffCheck": true,
+    "antiSecret": true,
+    "npmInstall": true,
+    "nodeSyntax": true,
+    "contractTests": true,
+    "smokeLocalHttp": true,
+    "kustomizeDevRender": true,
+    "kustomizeProdRender": true,
+    "dockerLocal": "deferred",
+    "dockerCi": "success"
+  }
+}

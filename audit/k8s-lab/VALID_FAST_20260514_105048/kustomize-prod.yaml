@@ -1,0 +1,163 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/name: doctrine-z-ai-delivery-k8s-lab
+    app.kubernetes.io/part-of: doctrine-z
+    doctrine.z/lab: ai-delivery-k8s
+  name: doctrine-z-lab
+---
+apiVersion: v1
+data:
+  APP_ENV: dev
+  LLM_PROVIDER: mock-llm
+  QUALITY_GATE_MODE: strict
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: doctrine-z-api
+    app.kubernetes.io/part-of: doctrine-z-ai-delivery-k8s-lab
+    doctrine.z/lab: ai-delivery-k8s
+  name: doctrine-z-api-config
+  namespace: doctrine-z-lab
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: doctrine-z-api
+    app.kubernetes.io/name: doctrine-z-api
+    app.kubernetes.io/part-of: doctrine-z-ai-delivery-k8s-lab
+    doctrine.z/lab: ai-delivery-k8s
+  name: doctrine-z-api
+  namespace: doctrine-z-lab
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+  selector:
+    app: doctrine-z-api
+    doctrine.z/lab: ai-delivery-k8s
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: doctrine-z-api
+    app.kubernetes.io/name: doctrine-z-api
+    app.kubernetes.io/part-of: doctrine-z-ai-delivery-k8s-lab
+    doctrine.z/lab: ai-delivery-k8s
+  name: doctrine-z-api
+  namespace: doctrine-z-lab
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: doctrine-z-api
+      doctrine.z/lab: ai-delivery-k8s
+  template:
+    metadata:
+      labels:
+        app: doctrine-z-api
+        app.kubernetes.io/name: doctrine-z-api
+        app.kubernetes.io/part-of: doctrine-z-ai-delivery-k8s-lab
+        doctrine.z/lab: ai-delivery-k8s
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: doctrine-z-api-config
+        image: ghcr.io/flobehejohn/doctrine-z-ai-delivery-k8s-lab:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 20
+          timeoutSeconds: 2
+        name: doctrine-z-api
+        ports:
+        - containerPort: 3000
+          name: http
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /readyz
+            port: http
+          initialDelaySeconds: 3
+          periodSeconds: 10
+          timeoutSeconds: 2
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 10001
+          runAsUser: 10001
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: doctrine-z-api
+    app.kubernetes.io/name: doctrine-z-api
+    app.kubernetes.io/part-of: doctrine-z-ai-delivery-k8s-lab
+    doctrine.z/lab: ai-delivery-k8s
+  name: doctrine-z-api
+  namespace: doctrine-z-lab
+spec:
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 70
+        type: Utilization
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: doctrine-z-api
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app: doctrine-z-api
+    app.kubernetes.io/name: doctrine-z-api
+    app.kubernetes.io/part-of: doctrine-z-ai-delivery-k8s-lab
+    doctrine.z/lab: ai-delivery-k8s
+  name: doctrine-z-api-allow-http
+  namespace: doctrine-z-lab
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: doctrine-z-lab
+    ports:
+    - port: 3000
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: doctrine-z-api
+      doctrine.z/lab: ai-delivery-k8s
+  policyTypes:
+  - Ingress
